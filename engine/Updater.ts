@@ -8,28 +8,12 @@ export interface IUpdater {
   onStop(): void
 }
 
-export abstract class TickUpdater implements IUpdater {
-  private pendingTimeDelta: number = 0
-
-  constructor(
-    private readonly tickDuration: number,
-  ) {
+export default abstract class Updater implements IUpdater {
+  public onRun(): void { // tslint:disable-line:no-empty
   }
 
-  public onRun(): void {
-  }
+  public abstract update(game: Game, deltaTime: number): void
 
-  public update(game: Game, deltaTime: number): void {
-    this.pendingTimeDelta += deltaTime
-    while (this.pendingTimeDelta >= this.tickDuration) {
-      this.updateTick(game)
-      this.pendingTimeDelta -= this.tickDuration
-    }
-  }
-
-  public abstract updateTick(game: Game): void
-
-  public onStop(): void {
-    this.pendingTimeDelta = 0
+  public onStop(): void { // tslint:disable-line:no-empty
   }
 }
