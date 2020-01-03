@@ -41,5 +41,15 @@ export abstract class CanvasRenderer implements IRenderer {
     this.renderingContext.fill()
   }
 
-  public drawSprite(sprite: HTMLImageElement | HTMLCanvasElement): void {}
+  public drawSprite(
+    sprite: HTMLImageElement | HTMLCanvasElement,
+    x: number,
+    y: number,
+    scaleX: number = 1,
+    scaleY: number = scaleX,
+  ): void {
+    const spriteWidth = sprite instanceof HTMLImageElement ? sprite.naturalWidth : sprite.width
+    const spriteHeight = sprite instanceof HTMLImageElement ? sprite.naturalHeight : sprite.height
+    this.renderingContext.drawImage(sprite, x, y, spriteWidth * scaleX, spriteHeight * scaleY)
+  }
 }
