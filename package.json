@@ -1,7 +1,7 @@
 {
   "name": "racing-game",
   "version": "0.0.0",
-  "description": "Outrun-like browser racing game.",
+  "description": "OutRun-like browser racing game.",
   "main": "main.js",
   "private": true,
   "scripts": {
