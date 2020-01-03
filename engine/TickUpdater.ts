@@ -1,7 +1,7 @@
 import Game from './Game.js'
 import Updater from './Updater.js'
 
-export abstract class TickUpdater extends Updater {
+export default abstract class TickUpdater extends Updater {
   private pendingTimeDelta: number = 0
 
   constructor(
