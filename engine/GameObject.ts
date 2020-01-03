@@ -4,7 +4,11 @@ import {IRenderer} from './Renderer.js'
 export interface IGameObject<R extends IRenderer> {
   readonly subObjects: ReadonlyArray<IGameObject<R>>
 
+  onRun(): void
+
   update(game: Game, deltaTime: number): void
+
+  onStop(): void
 
   render(renderer: R): void
 
@@ -20,10 +24,16 @@ export default abstract class GameObject<R extends IRenderer> implements IGameOb
     return this.subGameObjects
   }
 
-  public update(game: Game, deltaTime: number): void { // tslint:disable-line:no-empty
+  public onRun(): void { // tslint:disable-line:no-empty
+  }
+
+  public update(game: Game, deltaTime: number): void {
     for (const gameObject of this.subGameObjects) {
       gameObject.update(game, deltaTime)
     }
+  }
+
+  public onStop(): void { // tslint:disable-line:no-empty
   }
 
   public render(renderer: R): void {
