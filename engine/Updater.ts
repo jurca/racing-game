@@ -1,6 +1,8 @@
 import Game from './Game.js'
+import GameObjectCollection, {IGameObjectCollection} from './GameObjectCollection.js'
+import {IRenderer} from './Renderer.js'
 
-export interface IUpdater {
+export interface IUpdater extends IGameObjectCollection<IRenderer<any>> {
   onRun(): void
 
   update(game: Game, deltaTime: number): void
@@ -8,12 +10,22 @@ export interface IUpdater {
   onStop(): void
 }
 
-export default abstract class Updater implements IUpdater {
-  public onRun(): void { // tslint:disable-line:no-empty
+export default class Updater extends GameObjectCollection<IRenderer<any>> implements IUpdater {
+  public onRun(): void {
+    for (const gameObject of this.gameObjects) {
+      gameObject.onRun()
+    }
   }
 
-  public abstract update(game: Game, deltaTime: number): void
+  public update(game: Game, deltaTime: number): void {
+    for (const gameObject of this.gameObjects) {
+      gameObject.update(game, deltaTime)
+    }
+  }
 
-  public onStop(): void { // tslint:disable-line:no-empty
+  public onStop(): void {
+    for (const gameObject of this.gameObjects) {
+      gameObject.onStop()
+    }
   }
 }

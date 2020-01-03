@@ -1,13 +1,17 @@
-export interface IRenderer {
+import GameObjectCollection, {IGameObjectCollection} from './GameObjectCollection.js'
+
+export interface IRenderer<R extends IRenderer<any>> extends IGameObjectCollection<R> {
   render(deltaTime: number): void
 }
 
-export abstract class CanvasRenderer implements IRenderer {
+export class CanvasRenderer extends GameObjectCollection<CanvasRenderer> implements IRenderer<CanvasRenderer> {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
     protected canvas: HTMLCanvasElement,
   ) {
+    super()
+
     const renderingContext = canvas.getContext('2d', {
       alpha: false,
     })
@@ -18,6 +22,9 @@ export abstract class CanvasRenderer implements IRenderer {
   }
 
   public render(): void {
+    for (const gameObject of this.gameObjects) {
+      gameObject.render(this)
+    }
   }
 
   public drawPolygon(
