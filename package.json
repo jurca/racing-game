@@ -1,0 +1,38 @@
+{
+  "name": "racing-game",
+  "version": "0.0.0",
+  "description": "Outrun-like browser racing game.",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "test": "tslint --project ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jurca/racing-game.git"
+  },
+  "keywords": [
+    "racer",
+    "racing",
+    "outrun",
+    "pseudo-3d",
+    "game"
+  ],
+  "author": "Martin Jurča <martin.jurca@firma.seznam.cz>",
+  "contributors": [
+    {
+      "name": "Jake Gordon",
+      "email": "jake@codeincomplete.com",
+      "url": "https://github.com/jakesgordon"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jurca/racing-game/issues"
+  },
+  "homepage": "https://github.com/jurca/racing-game#readme",
+  "devDependencies": {
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  }
+}
