@@ -5,7 +5,8 @@
   "main": "main.js",
   "private": true,
   "scripts": {
-    "test": "tslint --project ."
+    "test": "tslint --project .",
+    "dev": "npx tsc --watch"
   },
   "repository": {
     "type": "git",

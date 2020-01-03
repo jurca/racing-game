@@ -84,10 +84,10 @@ var Util = {
 //=========================================================================
 
 if (!window.requestAnimationFrame) { // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-  window.requestAnimationFrame = window.webkitRequestAnimationFrame || 
-                                 window.mozRequestAnimationFrame    || 
-                                 window.oRequestAnimationFrame      || 
-                                 window.msRequestAnimationFrame     || 
+  window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
+                                 window.mozRequestAnimationFrame    ||
+                                 window.oRequestAnimationFrame      ||
+                                 window.msRequestAnimationFrame     ||
                                  function(callback, element) {
                                    window.setTimeout(callback, 1000 / 60);
                                  }
@@ -97,7 +97,7 @@ if (!window.requestAnimationFrame) { // http://paulirish.com/2011/requestanimati
 // GAME LOOP helpers
 //=========================================================================
 
-var Game = {  // a modified version of the game loop from my previous boulderdash game - see http://codeincomplete.com/posts/2011/10/25/javascript_boulderdash/#gameloop
+var Game = {  // a modified version of the engine loop from my previous boulderdash engine - see http://codeincomplete.com/posts/2011/10/25/javascript_boulderdash/#gameloop
 
   run: function(options) {
 
@@ -108,8 +108,8 @@ var Game = {  // a modified version of the game loop from my previous boulderdas
       Game.setKeyListener(options.keys);
 
       var canvas = options.canvas,    // canvas render target is provided by caller
-          update = options.update,    // method to update game logic is provided by caller
-          render = options.render,    // method to render the game is provided by caller
+          update = options.update,    // method to update engine logic is provided by caller
+          render = options.render,    // method to render the engine is provided by caller
           step   = options.step,      // fixed frame step (1/fps) is specified by caller
           stats  = options.stats,     // stats instance is provided by caller
           now    = null,
@@ -244,14 +244,14 @@ var Render = {
         l1 = Render.laneMarkerWidth(w1, lanes),
         l2 = Render.laneMarkerWidth(w2, lanes),
         lanew1, lanew2, lanex1, lanex2, lane;
-    
+
     ctx.fillStyle = color.grass;
     ctx.fillRect(0, y2, width, y1 - y2);
-    
+
     Render.polygon(ctx, x1-w1-r1, y1, x1-w1, y1, x2-w2, y2, x2-w2-r2, y2, color.rumble);
     Render.polygon(ctx, x1+w1+r1, y1, x1+w1, y1, x2+w2, y2, x2+w2+r2, y2, color.rumble);
     Render.polygon(ctx, x1-w1,    y1, x1+w1, y1, x2+w2, y2, x2-w2,    y2, color.road);
-    
+
     if (color.lane) {
       lanew1 = w1*2/lanes;
       lanew2 = w2*2/lanes;
@@ -260,7 +260,7 @@ var Render = {
       for(lane = 1 ; lane < lanes ; lanex1 += lanew1, lanex2 += lanew2, lane++)
         Render.polygon(ctx, lanex1 - l1/2, y1, lanex1 + l1/2, y1, lanex2 + l2/2, y2, lanex2 - l2/2, y2, color.lane);
     }
-    
+
     Render.fog(ctx, 0, y1, width, y2-y1, fog);
   },
 
@@ -278,7 +278,7 @@ var Render = {
     var sourceY = layer.y
     var sourceW = Math.min(imageW, layer.x+layer.w-sourceX);
     var sourceH = imageH;
-    
+
     var destX = 0;
     var destY = offset;
     var destW = Math.floor(width * (sourceW/imageW));

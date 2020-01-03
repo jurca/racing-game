@@ -3,6 +3,7 @@
     "incremental": true,
     "target": "es2020",
     "module": "esnext",
+    "rootDir": ".",
     "outDir": "./dist",
     "sourceMap": true,
     "strict": true,
