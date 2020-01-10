@@ -45,6 +45,15 @@ export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer>
     this.renderingContext.fill()
   }
 
+  public drawFog(x: number, y: number, width: number, height: number, color: string, density: number): void {
+    if (density) {
+      this.renderingContext.globalAlpha = density
+      this.renderingContext.fillStyle = color
+      this.renderingContext.fillRect(x, y, width, height)
+      this.renderingContext.globalAlpha = 1
+    }
+  }
+
   public drawSprite(
     sprite: HTMLImageElement | HTMLCanvasElement,
     x: number,
