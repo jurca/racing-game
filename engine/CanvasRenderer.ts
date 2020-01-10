@@ -1,17 +1,14 @@
 import Camera from './Camera.js'
 import Game from './Game.js'
-import GameObjectCollection from './GameObjectCollection.js'
 import {IRenderer} from './Renderer.js'
 
-export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer> implements IRenderer {
+export default class CanvasRenderer implements IRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
     protected canvas: HTMLCanvasElement,
     public readonly camera: Camera = new Camera(0, 0, 0),
   ) {
-    super()
-
     const renderingContext = canvas.getContext('2d', {
       alpha: false,
     })
