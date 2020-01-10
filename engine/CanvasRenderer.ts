@@ -1,14 +1,15 @@
 import Camera from './Camera.js'
-import Game from './Game.js'
-import {IRenderer} from './Renderer.js'
+import Renderer from './Renderer.js'
 
-export default class CanvasRenderer implements IRenderer {
+export default class CanvasRenderer extends Renderer {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    public readonly camera: Camera = new Camera(0, 0, 0),
+    camera: Camera = new Camera(0, 0, 0),
   ) {
+    super(camera)
+
     const renderingContext = canvas.getContext('2d', {
       alpha: false,
     })
@@ -16,12 +17,6 @@ export default class CanvasRenderer implements IRenderer {
       throw new Error('The rendering context could not be created for the provided canvas')
     }
     this.renderingContext = renderingContext
-  }
-
-  public render(game: Game<CanvasRenderer>, deltaTime: number): void {
-    for (const gameObject of game.gameObjects) {
-      gameObject.render(this, deltaTime)
-    }
   }
 
   public drawPolygon(
