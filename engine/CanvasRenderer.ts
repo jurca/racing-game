@@ -7,7 +7,7 @@ export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer>
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    public camera: Camera = new Camera(0, 0, 0),
+    public readonly camera: Camera = new Camera(0, 0, 0),
   ) {
     super()
 

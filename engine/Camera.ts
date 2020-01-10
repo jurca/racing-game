@@ -1,8 +1,4 @@
-export default class Camera {
-  constructor(
-    public x: number,
-    public y: number,
-    public z: number,
-  ) {
-  }
+import Point3D from './Point3D.js'
+
+export default class Camera extends Point3D {
 }
