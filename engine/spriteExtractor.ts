@@ -1,5 +1,5 @@
 export default function getSprite(
-  bundle: HTMLImageElement | HTMLCanvasElement,
+  spriteSheet: HTMLImageElement | HTMLCanvasElement,
   offsetX: number,
   offsetY: number,
   width: number,
@@ -12,6 +12,6 @@ export default function getSprite(
   if (!spriteRenderingContext) {
     throw new Error('Cannot create sprite - failed to create a 2D rendering context')
   }
-  spriteRenderingContext.drawImage(bundle, offsetX, offsetY, width, height, 0, 0, width, height)
+  spriteRenderingContext.drawImage(spriteSheet, offsetX, offsetY, width, height, 0, 0, width, height)
   return sprite
 }
