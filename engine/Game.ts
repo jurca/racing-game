@@ -8,7 +8,7 @@ export default class Game {
   private readonly pendingReleasedKeys: string[] = []
 
   constructor(
-    private readonly renderer: IRenderer,
+    private readonly renderer: IRenderer<any>,
     private readonly updater: IUpdater,
   ) {
   }
