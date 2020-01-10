@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "test": "tslint --project .",
-    "dev": "npx tsc --watch"
+    "dev": "tsc --watch",
+    "start": "serve"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
   },
   "homepage": "https://github.com/jurca/racing-game#readme",
   "devDependencies": {
+    "serve": "^11.3.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"
   }
