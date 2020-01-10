@@ -6,7 +6,7 @@ export default class CanvasRenderer extends Renderer {
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    camera: Camera = new Camera(0, 0, 0),
+    camera: Camera,
   ) {
     super(camera)
 
