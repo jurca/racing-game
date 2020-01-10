@@ -1,4 +1,3 @@
-import Camera from './Camera.js'
 import Game from './Game.js'
 import GameObjectCollection from './GameObjectCollection.js'
 import Point3D from './Point3D.js'
@@ -20,8 +19,6 @@ export interface IGameObject<R extends IRenderer> extends Point3D {
   addSubObject(gameObject: IGameObject<R>): void
 
   removeSubObject(gameObject: IGameObject<R>): void
-
-  getPositionInFrame(camera: Camera): Readonly<Point3D>
 }
 
 export default abstract class GameObject<R extends IRenderer> extends Point3D implements IGameObject<R> {
@@ -83,9 +80,5 @@ export default abstract class GameObject<R extends IRenderer> extends Point3D im
   public removeSubObject(gameObject: GameObject<R>): void {
     this.subGameObjects.removeGameObject(gameObject)
     gameObject.parentObject = null
-  }
-
-  public getPositionInFrame(camera: Camera): Readonly<Point3D> {
-    return this.absolutePosition.subtract(camera)
   }
 }
