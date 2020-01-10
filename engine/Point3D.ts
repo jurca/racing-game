@@ -6,7 +6,7 @@ export default class Point3D {
   ) {
   }
 
-  public add(otherPoint: Point3D): Point3D {
+  public add(otherPoint: Readonly<Point3D>): Point3D {
     return new Point3D(
       this.x + otherPoint.x,
       this.y + otherPoint.y,
@@ -14,7 +14,7 @@ export default class Point3D {
     )
   }
 
-  public subtract(otherPoint: Point3D): Point3D {
+  public subtract(otherPoint: Readonly<Point3D>): Point3D {
     return new Point3D(
       this.x - otherPoint.x,
       this.y - otherPoint.y,
