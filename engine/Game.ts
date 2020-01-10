@@ -1,3 +1,4 @@
+import Camera from './Camera.js';
 import {IRenderer} from './Renderer.js'
 import {IUpdater} from './Updater.js'
 
@@ -11,6 +12,10 @@ export default class Game {
     private readonly renderer: IRenderer<any>,
     private readonly updater: IUpdater,
   ) {
+  }
+
+  public get camera(): Camera {
+    return this.renderer.camera
   }
 
   public run(): void {

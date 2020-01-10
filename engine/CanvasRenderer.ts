@@ -1,3 +1,4 @@
+import Camera from './Camera.js'
 import GameObjectCollection from './GameObjectCollection.js'
 import {IRenderer} from './Renderer.js'
 
@@ -6,6 +7,7 @@ export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer>
 
   constructor(
     protected canvas: HTMLCanvasElement,
+    public camera: Camera = new Camera(0, 0, 0),
   ) {
     super()
 
