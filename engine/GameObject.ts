@@ -4,18 +4,18 @@ import GameObjectCollection from './GameObjectCollection.js'
 import Point3D from './Point3D.js'
 import {IRenderer} from './Renderer.js'
 
-export interface IGameObject<R extends IRenderer<any>> extends Point3D {
+export interface IGameObject<R extends IRenderer> extends Point3D {
   readonly parent: null | IGameObject<R>
   readonly subObjects: ReadonlyArray<IGameObject<R>>
   readonly absolutePosition: Readonly<Point3D>
 
   onRun(): void
 
-  update(game: Game, deltaTime: number): void
+  update(game: Game<R>, deltaTime: number): void
 
   onStop(): void
 
-  render(renderer: R): void
+  render(renderer: R, deltaTime: number): void
 
   addSubObject(gameObject: IGameObject<R>): void
 
@@ -24,7 +24,7 @@ export interface IGameObject<R extends IRenderer<any>> extends Point3D {
   getPositionInFrame(camera: Camera): Readonly<Point3D>
 }
 
-export default abstract class GameObject<R extends IRenderer<any>> extends Point3D implements IGameObject<R> {
+export default abstract class GameObject<R extends IRenderer> extends Point3D implements IGameObject<R> {
   private parentObject: null | GameObject<R> = null
   private subGameObjects = new GameObjectCollection<R>()
 
@@ -54,7 +54,7 @@ export default abstract class GameObject<R extends IRenderer<any>> extends Point
     }
   }
 
-  public update(game: Game, deltaTime: number): void {
+  public update(game: Game<R>, deltaTime: number): void {
     for (const gameObject of this.subGameObjects.gameObjects) {
       gameObject.update(game, deltaTime)
     }
@@ -66,9 +66,9 @@ export default abstract class GameObject<R extends IRenderer<any>> extends Point
     }
   }
 
-  public render(renderer: R): void {
+  public render(renderer: R, deltaTime: number): void {
     for (const gameObject of this.subGameObjects.gameObjects) {
-      gameObject.render(renderer)
+      gameObject.render(renderer, deltaTime)
     }
   }
 

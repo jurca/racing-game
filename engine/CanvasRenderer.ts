@@ -1,8 +1,9 @@
 import Camera from './Camera.js'
+import Game from './Game.js'
 import GameObjectCollection from './GameObjectCollection.js'
 import {IRenderer} from './Renderer.js'
 
-export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer> implements IRenderer<CanvasRenderer> {
+export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer> implements IRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
@@ -20,9 +21,9 @@ export default class CanvasRenderer extends GameObjectCollection<CanvasRenderer>
     this.renderingContext = renderingContext
   }
 
-  public render(): void {
-    for (const gameObject of this.gameObjects) {
-      gameObject.render(this)
+  public render(game: Game<CanvasRenderer>, deltaTime: number): void {
+    for (const gameObject of game.gameObjects) {
+      gameObject.render(this, deltaTime)
     }
   }
 

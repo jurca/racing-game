@@ -1,8 +1,8 @@
 import Camera from './Camera.js'
-import {IGameObjectCollection} from './GameObjectCollection.js'
+import Game from './Game.js'
 
-export interface IRenderer<R extends IRenderer<any>> extends IGameObjectCollection<R> {
+export interface IRenderer {
   readonly camera: Camera
 
-  render(deltaTime: number): void
+  render(game: Game<this>, deltaTime: number): void
 }

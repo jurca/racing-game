@@ -1,16 +1,17 @@
 import Game from './Game.js'
+import {IRenderer} from './Renderer.js'
 import Updater from './Updater.js'
 
 export default abstract class TickUpdater extends Updater {
   private pendingTimeDelta: number = 0
 
-  constructor(
+  protected constructor(
     private readonly tickDuration: number,
   ) {
     super()
   }
 
-  public update(game: Game, deltaTime: number): void {
+  public update(game: Game<IRenderer>, deltaTime: number): void {
     this.pendingTimeDelta += deltaTime
     while (this.pendingTimeDelta >= this.tickDuration) {
       this.updateTick(game)
@@ -18,7 +19,7 @@ export default abstract class TickUpdater extends Updater {
     }
   }
 
-  public abstract updateTick(game: Game): void
+  public abstract updateTick(game: Game<IRenderer>): void
 
   public onStop(): void {
     this.pendingTimeDelta = 0

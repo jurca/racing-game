@@ -1,30 +1,29 @@
 import Game from './Game.js'
-import GameObjectCollection, {IGameObjectCollection} from './GameObjectCollection.js'
 import {IRenderer} from './Renderer.js'
 
-export interface IUpdater extends IGameObjectCollection<IRenderer<any>> {
-  onRun(): void
+export interface IUpdater {
+  onRun(game: Game<IRenderer>): void
 
-  update(game: Game, deltaTime: number): void
+  update(game: Game<IRenderer>, deltaTime: number): void
 
-  onStop(): void
+  onStop(game: Game<IRenderer>): void
 }
 
-export default class Updater extends GameObjectCollection<IRenderer<any>> implements IUpdater {
-  public onRun(): void {
-    for (const gameObject of this.gameObjects) {
+export default class Updater implements IUpdater {
+  public onRun(game: Game<IRenderer>): void {
+    for (const gameObject of game.gameObjects) {
       gameObject.onRun()
     }
   }
 
-  public update(game: Game, deltaTime: number): void {
-    for (const gameObject of this.gameObjects) {
+  public update(game: Game<IRenderer>, deltaTime: number): void {
+    for (const gameObject of game.gameObjects) {
       gameObject.update(game, deltaTime)
     }
   }
 
-  public onStop(): void {
-    for (const gameObject of this.gameObjects) {
+  public onStop(game: Game<IRenderer>): void {
+    for (const gameObject of game.gameObjects) {
       gameObject.onStop()
     }
   }

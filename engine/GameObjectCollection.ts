@@ -1,7 +1,7 @@
 import {IGameObject} from './GameObject.js'
 import {IRenderer} from './Renderer.js'
 
-export interface IGameObjectCollection<R extends IRenderer<any>> {
+export interface IGameObjectCollection<R extends IRenderer> {
   readonly gameObjects: ReadonlyArray<IGameObject<R>>
 
   addGameObject(gameObject: IGameObject<R>): void
@@ -9,7 +9,7 @@ export interface IGameObjectCollection<R extends IRenderer<any>> {
   removeGameObject(gameObject: IGameObject<R>): void
 }
 
-export default class GameObjectCollection<R extends IRenderer<any>> implements IGameObjectCollection<R> {
+export default class GameObjectCollection<R extends IRenderer> implements IGameObjectCollection<R> {
   public readonly gameObjects: ReadonlyArray<IGameObject<R>> = []
 
   public addGameObject(gameObject: IGameObject<R>): void {

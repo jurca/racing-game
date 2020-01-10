@@ -1,17 +1,19 @@
-import Camera from './Camera.js';
+import Camera from './Camera.js'
+import GameObjectCollection from './GameObjectCollection.js'
 import {IRenderer} from './Renderer.js'
 import {IUpdater} from './Updater.js'
 
-export default class Game {
+export default class Game<R extends IRenderer> extends GameObjectCollection<R> {
   public readonly pressedKeys: {readonly [key: string]: undefined | boolean} = {}
   private lastFrameTimestamp: number = performance.now()
   private frameRequestId: number = -1
   private readonly pendingReleasedKeys: string[] = []
 
   constructor(
-    private readonly renderer: IRenderer<any>,
+    private readonly renderer: R,
     private readonly updater: IUpdater,
   ) {
+    super()
   }
 
   public get camera(): Camera {
@@ -28,8 +30,8 @@ export default class Game {
     this.lastFrameTimestamp = performance.now()
     this.frameRequestId = requestAnimationFrame(this.update)
 
-    this.updater.onRun()
-    this.renderer.render(0)
+    this.updater.onRun(this)
+    this.renderer.render(this, 0)
   }
 
   public stop(): void {
@@ -37,7 +39,7 @@ export default class Game {
       throw new Error('The engine loop is not running, run the run() method first')
     }
 
-    this.updater.onStop()
+    this.updater.onStop(this)
     cancelAnimationFrame(this.frameRequestId)
     this.frameRequestId = -1
   }
@@ -48,7 +50,7 @@ export default class Game {
     // or non-visible tab.
     const deltaTime  = Math.min(1, (now - this.lastFrameTimestamp) / 1000)
     this.updater.update(this, deltaTime)
-    this.renderer.render(deltaTime)
+    this.renderer.render(this, deltaTime)
     for (const releasedKey of this.pendingReleasedKeys) {
       (this.pressedKeys as {[key: string]: boolean})[releasedKey] = false
     }
