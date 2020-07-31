@@ -3,7 +3,7 @@ import GameObjectCollection from './GameObjectCollection.js'
 import {IRenderer} from './Renderer.js'
 import {IUpdater} from './Updater.js'
 
-export default class Game<R extends IRenderer> extends GameObjectCollection<R> {
+export default class Game<C extends Camera, R extends IRenderer<C>> extends GameObjectCollection<C, R> {
   public readonly pressedKeys: {readonly [key: string]: undefined | boolean} = {}
   private lastFrameTimestamp: number = performance.now()
   private frameRequestId: number = -1

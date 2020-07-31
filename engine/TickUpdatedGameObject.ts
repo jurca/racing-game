@@ -1,10 +1,11 @@
+import Camera from './Camera.js'
 import Game from './Game.js'
 import GameObject from './GameObject.js'
 import {IRenderer} from './Renderer.js'
 
-export default abstract class TickUpdatedGameObject<R extends IRenderer> extends GameObject<R> {
-  public get subObjects(): ReadonlyArray<TickUpdatedGameObject<R>> {
-    return super.subObjects as ReadonlyArray<TickUpdatedGameObject<R>>
+export default abstract class TickUpdatedGameObject<C extends Camera, R extends IRenderer<C>> extends GameObject<C, R> {
+  public get subObjects(): ReadonlyArray<TickUpdatedGameObject<C, R>> {
+    return super.subObjects as ReadonlyArray<TickUpdatedGameObject<C, R>>
   }
 
   public update(): never {
@@ -13,17 +14,17 @@ export default abstract class TickUpdatedGameObject<R extends IRenderer> extends
     )
   }
 
-  public updateTick(game: Game<R>): void {
+  public updateTick(game: Game<C, R>): void {
     for (const gameObject of this.subObjects) {
       gameObject.updateTick(game)
     }
   }
 
-  public addSubObject(gameObject: TickUpdatedGameObject<R>): void {
+  public addSubObject(gameObject: TickUpdatedGameObject<C, R>): void {
     super.addSubObject(gameObject)
   }
 
-  public removeSubObject(gameObject: TickUpdatedGameObject<R>): void {
+  public removeSubObject(gameObject: TickUpdatedGameObject<C, R>): void {
     super.removeSubObject(gameObject)
   }
 }

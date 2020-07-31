@@ -1,19 +1,19 @@
 import Camera from './Camera.js'
 import Game from './Game.js'
 
-export interface IRenderer {
-  readonly camera: Camera
+export interface IRenderer<C extends Camera> {
+  readonly camera: C
 
-  render(game: Game<this>, deltaTime: number): void
+  render(game: Game<C, this>, deltaTime: number): void
 }
 
-export default abstract class Renderer implements IRenderer {
+export default abstract class Renderer<C extends Camera> implements IRenderer<C> {
   protected constructor(
-    public readonly camera: Camera,
+    public readonly camera: C,
   ) {
   }
 
-  public render(game: Game<Renderer>, deltaTime: number): void {
+  public render(game: Game<C, Renderer<C>>, deltaTime: number): void {
     for (const gameObject of game.gameObjects) {
       gameObject.render(this, deltaTime)
     }

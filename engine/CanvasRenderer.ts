@@ -1,12 +1,12 @@
 import Camera from './Camera.js'
 import Renderer from './Renderer.js'
 
-export default class CanvasRenderer extends Renderer {
+export default class CanvasRenderer<C extends Camera> extends Renderer<C> {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    camera: Camera,
+    camera: C,
   ) {
     super(camera)
 

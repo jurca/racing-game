@@ -1,3 +1,4 @@
+import Camera from './Camera.js'
 import Game from './Game.js'
 import {IRenderer} from './Renderer.js'
 import TickUpdatedGameObject from './TickUpdatedGameObject.js'
@@ -12,7 +13,7 @@ export default class TickUpdater extends Updater {
     super()
   }
 
-  public update(game: Game<IRenderer>, deltaTime: number): void {
+  public update(game: Game<Camera, IRenderer<Camera>>, deltaTime: number): void {
     this.pendingTimeDelta += deltaTime
     for (const gameObject of game.gameObjects) {
       if (!(gameObject instanceof TickUpdatedGameObject)) {
@@ -25,7 +26,7 @@ export default class TickUpdater extends Updater {
     }
   }
 
-  public updateTick(game: Game<IRenderer>): void {
+  public updateTick(game: Game<Camera, IRenderer<Camera>>): void {
     for (const gameObject of game.gameObjects) {
       if (gameObject instanceof TickUpdatedGameObject) {
         gameObject.updateTick(game)
