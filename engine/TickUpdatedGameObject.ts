@@ -7,7 +7,7 @@ export default abstract class TickUpdatedGameObject<R extends IRenderer> extends
     return super.subObjects as ReadonlyArray<TickUpdatedGameObject<R>>
   }
 
-  public update(): void {
+  public update(): never {
     throw new Error(
       'The update() method must not be used on TickUpdatedGameObject instances, use the updateTick() method instead',
     )
