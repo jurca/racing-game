@@ -30,7 +30,6 @@ export default class RoadSegment extends GameObject {
     public readonly laneCount: number,
     public readonly laneMarkerWidth: number,
     public readonly rumbleWidth: number,
-    public readonly fogDensity: number,
     public readonly colorConfiguration: IRoadSegmentColorConfiguration,
   ) {
     super(x, y, z)
@@ -49,9 +48,6 @@ export default class RoadSegment extends GameObject {
     }
     if (laneMarkerWidth <= 0) {
       throw new RangeError(`The laneMarkerWidth must be a positive number, ${laneMarkerWidth} was provided`)
-    }
-    if (fogDensity < 0 || fogDensity > 1) {
-      throw new RangeError(`The fogDensity must be within range 0 to 1 inclusive, ${fogDensity} was provided`)
     }
 
     const polygons: IRoadPolygon[] = []
