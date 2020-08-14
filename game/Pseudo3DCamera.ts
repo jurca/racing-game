@@ -7,8 +7,8 @@ export default class Pseudo3DCamera extends Camera {
 
   constructor(
     public readonly fieldOfView: number,
-    public readonly width: number,
-    public readonly height: number,
+    public readonly viewportWidth: number,
+    public readonly viewportHeight: number,
     x: number = 0,
     y: number = 0,
     z: number = 0,
@@ -24,8 +24,8 @@ export default class Pseudo3DCamera extends Camera {
       translatedPoint.y * scale,
     )
     return new Point2D( // scale
-      this.width / 2 + this.width / 2 * projectedPoint.x,
-      this.height / 2 - this.height / 2 * projectedPoint.y,
+      this.viewportWidth / 2 + this.viewportWidth / 2 * projectedPoint.x,
+      this.viewportHeight / 2 - this.viewportHeight / 2 * projectedPoint.y,
     )
   }
 }
