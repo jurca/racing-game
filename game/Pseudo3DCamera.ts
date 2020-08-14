@@ -7,13 +7,13 @@ export default class Pseudo3DCamera extends Camera {
 
   constructor(
     public readonly fieldOfView: number,
-    public readonly viewportWidth: number,
-    public readonly viewportHeight: number,
+    viewportWidth: number,
+    viewportHeight: number,
     x: number = 0,
     y: number = 0,
     z: number = 0,
   ) {
-    super(x, y, z)
+    super(viewportWidth, viewportHeight, x, y, z)
   }
 
   public project(point: Readonly<Point3D>): Readonly<Point2D> {
