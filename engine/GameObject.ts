@@ -26,7 +26,7 @@ export default abstract class GameObject<C extends Camera, R extends IRenderer<C
     extends Point3D
     implements IGameObject<C, R> {
   private parentObject: null | GameObject<C, R> = null
-  private subGameObjects = new GameObjectCollection<C, R>()
+  private readonly subGameObjects = new GameObjectCollection<C, R>()
 
   constructor(x: number = 0, y: number = 0, z: number = 0) {
     super(x, y, z)
