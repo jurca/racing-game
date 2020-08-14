@@ -1,4 +1,4 @@
-import CanvasRenderer from '../../engine/CanvasRenderer'
+import CanvasRenderer from '../../engine/Canvas2DRenderer'
 import Game from '../../engine/Game.js'
 import TickUpdatedGameObject from '../../engine/TickUpdatedGameObject.js'
 import Pseudo3DCamera from '../Pseudo3DCamera.js'

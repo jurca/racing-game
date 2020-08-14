@@ -1,7 +1,8 @@
 import Camera from './Camera.js'
+import Point2D from './Point2D.js'
 import Renderer from './Renderer.js'
 
-export default class CanvasRenderer<C extends Camera> extends Renderer<C> {
+export default class Canvas2DRenderer<C extends Camera> extends Renderer<C> {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
@@ -20,31 +21,28 @@ export default class CanvasRenderer<C extends Camera> extends Renderer<C> {
   }
 
   public drawPolygon(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number,
-    x4: number,
-    y4: number,
     color: string,
+    ...points: readonly [Readonly<Point2D>, Readonly<Point2D>, Readonly<Point2D>, ...ReadonlyArray<Point2D>]
   ): void {
     this.renderingContext.fillStyle = color
     this.renderingContext.beginPath()
-    this.renderingContext.moveTo(x1, y1)
-    this.renderingContext.lineTo(x2, y2)
-    this.renderingContext.lineTo(x3, y3)
-    this.renderingContext.lineTo(x4, y4)
+    this.renderingContext.moveTo(points[0].x, points[0].y)
+    for (const point of points.slice(1)) {
+      this.renderingContext.lineTo(point.x, point.y)
+    }
     this.renderingContext.closePath()
     this.renderingContext.fill()
   }
 
-  public drawFog(x: number, y: number, width: number, height: number, color: string, density: number): void {
+  public drawRect(color: string, p1: Point2D, p2: Point2D): void {
+    this.renderingContext.fillStyle = color
+    this.renderingContext.fillRect(p1.x, p1.y, p2.x - p1.x, p2.y - p2.y)
+  }
+
+  public drawFog(color: string, density: number, p1: Point2D, p2: Point2D): void {
     if (density) {
       this.renderingContext.globalAlpha = density
-      this.renderingContext.fillStyle = color
-      this.renderingContext.fillRect(x, y, width, height)
+      this.drawRect(color, p1, p2)
       this.renderingContext.globalAlpha = 1
     }
   }
