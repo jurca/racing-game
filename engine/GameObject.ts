@@ -84,4 +84,8 @@ export default abstract class GameObject<C extends Camera, R extends IRenderer<C
     this.subGameObjects.removeGameObject(gameObject)
     gameObject.parentObject = null
   }
+
+  public getAbsolutePosition(point: Point3D): Point3D {
+    return this.absolutePosition.add(point)
+  }
 }
