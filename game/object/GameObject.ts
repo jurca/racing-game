@@ -12,9 +12,10 @@ interface IImplementation {
 
 export default class GameObject extends TickUpdatedGameObject<Pseudo3DCamera, CanvasRenderer<Pseudo3DCamera>> {
   constructor(
+    x: number = 0, y: number = 0, z: number = 0,
     private readonly implementation: IImplementation = {},
   ) {
-    super()
+    super(x, y, z)
   }
 
   public onRun(): void {
