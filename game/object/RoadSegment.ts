@@ -10,8 +10,7 @@ export interface IRoadSegmentColorConfiguration {
 }
 
 interface IRoadPolygon {
-  readonly leading: readonly [Readonly<Point3D>, Readonly<Point3D>]
-  readonly trailing: readonly [Readonly<Point3D>, Readonly<Point3D>]
+  readonly points: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>]
   readonly color: string,
 }
 
@@ -68,21 +67,28 @@ export default class RoadSegment extends GameObject {
       polygons.push(
         {
           color: colorConfiguration.rumble,
-          leading: [leadingLeftCorner, leadingLeftRumbleInnerCorner],
-          trailing: [trailingLeftRumbleInnerCorner, trailingLeftCorner],
+          points: [leadingLeftCorner, leadingLeftRumbleInnerCorner, trailingLeftRumbleInnerCorner, trailingLeftCorner],
         },
         {
           color: colorConfiguration.rumble,
-          leading: [leadingRightRumbleInnerCorner, leadingRightCorner],
-          trailing: [trailingRightCorner, trailingRightRumbleInnerCorner],
+          points: [
+            leadingRightRumbleInnerCorner,
+            leadingRightCorner,
+            trailingRightCorner,
+            trailingRightRumbleInnerCorner,
+          ],
         },
       )
     }
 
     polygons.push({
       color: colorConfiguration.road,
-      leading: [leadingLeftRumbleInnerCorner, leadingRightRumbleInnerCorner],
-      trailing: [trailingRightRumbleInnerCorner, trailingLeftRumbleInnerCorner],
+      points: [
+        leadingLeftRumbleInnerCorner,
+        leadingRightRumbleInnerCorner,
+        trailingRightRumbleInnerCorner,
+        trailingLeftRumbleInnerCorner,
+      ],
     })
 
     const leadingMarkerSpacing = (leadingRightRumbleInnerCorner.x - leadingLeftRumbleInnerCorner.x) / laneCount
@@ -93,8 +99,12 @@ export default class RoadSegment extends GameObject {
       const centerOffset = new Point3D(laneMarkerWidth / 2)
       polygons.push({
         color: colorConfiguration.laneMarker,
-        leading: [leadingCenter.subtract(centerOffset), leadingCenter.add(centerOffset)],
-        trailing: [trailingCenter.add(centerOffset), trailingCenter.subtract(centerOffset)],
+        points: [
+          leadingCenter.subtract(centerOffset),
+          leadingCenter.add(centerOffset),
+          trailingCenter.add(centerOffset),
+          trailingCenter.subtract(centerOffset),
+        ],
       })
     }
 
@@ -107,10 +117,10 @@ export default class RoadSegment extends GameObject {
     for (const polygon of this.polygons) {
       renderer.drawPolygon(
         polygon.color,
-        renderer.camera.project(this.getAbsolutePosition(polygon.leading[0])),
-        renderer.camera.project(this.getAbsolutePosition(polygon.leading[1])),
-        renderer.camera.project(this.getAbsolutePosition(polygon.trailing[0])),
-        renderer.camera.project(this.getAbsolutePosition(polygon.trailing[1])),
+        renderer.camera.project(this.getAbsolutePosition(polygon.points[0])),
+        renderer.camera.project(this.getAbsolutePosition(polygon.points[1])),
+        renderer.camera.project(this.getAbsolutePosition(polygon.points[2])),
+        renderer.camera.project(this.getAbsolutePosition(polygon.points[3])),
       )
     }
   }
