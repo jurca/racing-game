@@ -49,6 +49,9 @@ export default class RoadSegment extends GameObject {
     if (laneMarkerWidth <= 0) {
       throw new RangeError(`The laneMarkerWidth must be a positive number, ${laneMarkerWidth} was provided`)
     }
+    if (rumbleWidth < 0) {
+      throw new RangeError(`The rumbleWidth must be a non-negative number, ${rumbleWidth} was provided`)
+    }
 
     const polygons: IRoadPolygon[] = []
 
