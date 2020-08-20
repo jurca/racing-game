@@ -1,5 +1,6 @@
 import Camera from './Camera.js'
 import Point2D from './Point2D.js'
+import Point3D from './Point3D.js'
 import Renderer from './Renderer.js'
 
 export default class Canvas2DRenderer<C extends Camera> extends Renderer<C> {
@@ -22,13 +23,14 @@ export default class Canvas2DRenderer<C extends Camera> extends Renderer<C> {
 
   public drawPolygon(
     color: string,
-    ...points: readonly [Readonly<Point2D>, Readonly<Point2D>, Readonly<Point2D>, ...ReadonlyArray<Point2D>]
+    ...points: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, ...ReadonlyArray<Readonly<Point3D>>]
   ): void {
     this.renderingContext.fillStyle = color
     this.renderingContext.beginPath()
-    this.renderingContext.moveTo(points[0].x, points[0].y)
-    for (const point of points.slice(1)) {
-      this.renderingContext.lineTo(point.x, point.y)
+    const firstProjectedPoint = this.camera.project(points[0])
+    this.renderingContext.moveTo(firstProjectedPoint.x, firstProjectedPoint.y)
+    for (const projected of points.slice(1).map((point) => this.camera.project(point))) {
+      this.renderingContext.lineTo(projected.x, projected.y)
     }
     this.renderingContext.closePath()
     this.renderingContext.fill()

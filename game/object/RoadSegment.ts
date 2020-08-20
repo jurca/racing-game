@@ -117,10 +117,10 @@ export default class RoadSegment extends GameObject {
     for (const polygon of this.polygons) {
       renderer.drawPolygon(
         polygon.color,
-        renderer.camera.project(this.getAbsolutePosition(polygon.points[0])),
-        renderer.camera.project(this.getAbsolutePosition(polygon.points[1])),
-        renderer.camera.project(this.getAbsolutePosition(polygon.points[2])),
-        renderer.camera.project(this.getAbsolutePosition(polygon.points[3])),
+        this.getAbsolutePosition(polygon.points[0]),
+        this.getAbsolutePosition(polygon.points[1]),
+        this.getAbsolutePosition(polygon.points[2]),
+        this.getAbsolutePosition(polygon.points[3]),
       )
     }
   }
