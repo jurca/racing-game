@@ -73,7 +73,7 @@ export default class Game {
   }
 
   #onKeyDown = (event: KeyboardEvent): void => {
-    (this.pressedKeys as any)[event.key] = true
+    this.#pressedKeys[event.key] = true
   }
 
   #onKeyUp = (event: KeyboardEvent): void => {
