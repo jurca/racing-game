@@ -23,8 +23,8 @@ export interface IGameObject<C extends Camera, R extends IRenderer<C>> extends P
 }
 
 export default abstract class GameObject<C extends Camera, R extends IRenderer<C>>
-    extends Point3D
-    implements IGameObject<C, R> {
+  extends Point3D
+  implements IGameObject<C, R> {
   private parentObject: null | GameObject<C, R> = null
   private readonly subGameObjects = new GameObjectCollection<C, R>()
 

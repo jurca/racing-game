@@ -11,7 +11,7 @@ export interface IGameObjectCollection<C extends Camera, R extends IRenderer<C>>
 }
 
 export default class GameObjectCollection<C extends Camera, R extends IRenderer<C>>
-    implements IGameObjectCollection<C, R> {
+implements IGameObjectCollection<C, R> {
   public readonly gameObjects: ReadonlyArray<IGameObject<C, R>> = []
 
   public addGameObject(gameObject: IGameObject<C, R>): void {

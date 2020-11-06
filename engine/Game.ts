@@ -48,7 +48,7 @@ export default class Game<C extends Camera, R extends IRenderer<C>> extends Game
     const now = performance.now()
     // Using requestAnimationFrame have to be able to handle large delta's caused when it 'hibernates' in a background
     // or non-visible tab.
-    const deltaTime  = Math.min(1, (now - this.lastFrameTimestamp) / 1000)
+    const deltaTime = Math.min(1, (now - this.lastFrameTimestamp) / 1000)
     this.updater.update(this, deltaTime)
     this.renderer.render(this, deltaTime)
     for (const releasedKey of this.pendingReleasedKeys) {
