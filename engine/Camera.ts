@@ -1,20 +1,12 @@
 import Point2D from './Point2D.js'
 import Point3D from './Point3D.js'
 
-export default abstract class Camera extends Point3D {
-  protected constructor(
-    public readonly viewportWidth: number,
-    public readonly viewportHeight: number,
-    x: number = 0,
-    y: number = 0,
-    z: number = 0,
-  ) {
-    super(x, y, z)
-  }
+export default interface Camera {
+  readonly viewportWidth: number
+  readonly viewportHeight: number
+  readonly position: Point3D
 
-  public abstract project(point: Readonly<Point3D>): Readonly<Point2D>
+  project(point: Readonly<Point3D>): Point2D
 
-  public translatePosition(absolutePosition: Readonly<Point3D>): Readonly<Point3D> {
-    return absolutePosition.subtract(this)
-  }
+  translatePosition(absolutePosition: Readonly<Point3D>): Point3D
 }

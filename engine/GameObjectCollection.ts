@@ -1,29 +1,22 @@
-import Camera from './Camera.js'
-import {IGameObject} from './GameObject.js'
-import {IRenderer} from './Renderer.js'
+import GameObject from './GameObject.js'
 
-export interface IGameObjectCollection<C extends Camera, R extends IRenderer<C>> {
-  readonly gameObjects: ReadonlyArray<IGameObject<C, R>>
+export default class GameObjectCollection implements GameObjectCollection {
+  readonly #gameObjects: GameObject[] = []
 
-  addGameObject(gameObject: IGameObject<C, R>): void
+  public get gameObjects(): readonly GameObject[] {
+    return this.#gameObjects
+  }
 
-  removeGameObject(gameObject: IGameObject<C, R>): void
-}
-
-export default class GameObjectCollection<C extends Camera, R extends IRenderer<C>>
-implements IGameObjectCollection<C, R> {
-  public readonly gameObjects: ReadonlyArray<IGameObject<C, R>> = []
-
-  public addGameObject(gameObject: IGameObject<C, R>): void {
-    if (!this.gameObjects.includes(gameObject)) {
-      (this.gameObjects as Array<IGameObject<C, R>>).push(gameObject)
+  public addGameObject(gameObject: GameObject): void {
+    if (!this.#gameObjects.includes(gameObject)) {
+      this.#gameObjects.push(gameObject)
     }
   }
 
-  public removeGameObject(gameObject: IGameObject<C, R>): void {
-    const index = this.gameObjects.indexOf(gameObject)
+  public removeGameObject(gameObject: GameObject): void {
+    const index = this.#gameObjects.indexOf(gameObject)
     if (index > -1) {
-      (this.gameObjects as Array<IGameObject<C, R>>).splice(index, 1)
+      this.#gameObjects.splice(index, 1)
     }
   }
 }

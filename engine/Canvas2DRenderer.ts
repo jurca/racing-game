@@ -1,14 +1,14 @@
+import AbstractRenderer from './AbstractRenderer.js'
 import Camera from './Camera.js'
 import Point2D from './Point2D.js'
 import Point3D from './Point3D.js'
-import Renderer from './Renderer.js'
 
-export default class Canvas2DRenderer<C extends Camera> extends Renderer<C> {
+export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    camera: C,
+    camera: Camera,
   ) {
     super(camera)
 

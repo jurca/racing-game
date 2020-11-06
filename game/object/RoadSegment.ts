@@ -1,26 +1,23 @@
 import Canvas2DRenderer from '../../engine/Canvas2DRenderer.js'
 import Point3D from '../../engine/Point3D.js'
-import Pseudo3DCamera from '../Pseudo3DCamera.js'
 import GameObject from './GameObject.js'
 
-export interface IRoadSegmentColorConfiguration {
+interface RoadSegmentColorConfiguration {
   readonly road: string
   readonly laneMarker: string
   readonly rumble: string
 }
 
-interface IRoadPolygon {
+interface RoadPolygon {
   readonly points: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>]
   readonly color: string,
 }
 
 export default class RoadSegment extends GameObject {
-  private readonly polygons: readonly IRoadPolygon[]
+  readonly #polygons: readonly RoadPolygon[]
 
   constructor(
-    x: number,
-    y: number,
-    z: number,
+    position: Point3D,
     public readonly leadingWidth: number,
     public readonly trailingWidth: number,
     public readonly length: number,
@@ -29,9 +26,9 @@ export default class RoadSegment extends GameObject {
     public readonly laneCount: number,
     public readonly laneMarkerWidth: number,
     public readonly rumbleWidth: number,
-    public readonly colorConfiguration: IRoadSegmentColorConfiguration,
+    public readonly colorConfiguration: RoadSegmentColorConfiguration,
   ) {
-    super(x, y, z)
+    super(position)
 
     if (leadingWidth < 0) {
       throw new RangeError(`The leadingWidth must be a non-negative number, ${leadingWidth} was provided`)
@@ -52,7 +49,7 @@ export default class RoadSegment extends GameObject {
       throw new RangeError(`The rumbleWidth must be a non-negative number, ${rumbleWidth} was provided`)
     }
 
-    const polygons: IRoadPolygon[] = []
+    const polygons: RoadPolygon[] = []
 
     const leadingLeftCorner = new Point3D(-leadingWidth / 2, 0, 0)
     const leadingRightCorner = new Point3D(leadingWidth / 2, 0, 0)
@@ -108,13 +105,13 @@ export default class RoadSegment extends GameObject {
       })
     }
 
-    this.polygons = polygons
+    this.#polygons = polygons
   }
 
-  public render(renderer: Canvas2DRenderer<Pseudo3DCamera>, deltaTime: number): void {
+  public render(renderer: Canvas2DRenderer, deltaTime: number): void {
     super.render(renderer, deltaTime)
 
-    for (const polygon of this.polygons) {
+    for (const polygon of this.#polygons) {
       renderer.drawPolygon(
         polygon.color,
         this.getAbsolutePosition(polygon.points[0]),

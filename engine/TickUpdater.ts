@@ -1,11 +1,9 @@
-import Camera from './Camera.js'
 import Game from './Game.js'
-import {IRenderer} from './Renderer.js'
 import TickUpdatedGameObject from './TickUpdatedGameObject.js'
 import Updater from './Updater.js'
 
 export default class TickUpdater extends Updater {
-  private pendingTimeDelta: number = 0
+  #pendingTimeDelta: number = 0
 
   constructor(
     private readonly tickDuration: number,
@@ -13,20 +11,20 @@ export default class TickUpdater extends Updater {
     super()
   }
 
-  public update(game: Game<Camera, IRenderer<Camera>>, deltaTime: number): void {
-    this.pendingTimeDelta += deltaTime
+  public update(game: Game, deltaTime: number): void {
+    this.#pendingTimeDelta += deltaTime
     for (const gameObject of game.gameObjects) {
       if (!(gameObject instanceof TickUpdatedGameObject)) {
         gameObject.update(game, deltaTime)
       }
     }
-    while (this.pendingTimeDelta >= this.tickDuration) {
+    while (this.#pendingTimeDelta >= this.tickDuration) {
       this.updateTick(game)
-      this.pendingTimeDelta -= this.tickDuration
+      this.#pendingTimeDelta -= this.tickDuration
     }
   }
 
-  public updateTick(game: Game<Camera, IRenderer<Camera>>): void {
+  public updateTick(game: Game): void {
     for (const gameObject of game.gameObjects) {
       if (gameObject instanceof TickUpdatedGameObject) {
         gameObject.updateTick(game)
@@ -35,6 +33,6 @@ export default class TickUpdater extends Updater {
   }
 
   public onStop(): void {
-    this.pendingTimeDelta = 0
+    this.#pendingTimeDelta = 0
   }
 }

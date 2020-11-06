@@ -1,19 +1,17 @@
-import Camera from '../engine/Camera.js'
+import AbstractCamera from '../engine/AbstractCamera.js'
 import Point2D from '../engine/Point2D.js'
 import Point3D from '../engine/Point3D.js'
 
-export default class Pseudo3DCamera extends Camera {
+export default class Pseudo3DCamera extends AbstractCamera {
   private readonly cameraDepth = 1 / Math.tan((this.fieldOfView / 2) * Math.PI / 180)
 
   constructor(
     public readonly fieldOfView: number,
     viewportWidth: number,
     viewportHeight: number,
-    x: number = 0,
-    y: number = 0,
-    z: number = 0,
+    position: Point3D,
   ) {
-    super(viewportWidth, viewportHeight, x, y, z)
+    super(viewportWidth, viewportHeight, position)
   }
 
   public project(point: Readonly<Point3D>): Readonly<Point2D> {

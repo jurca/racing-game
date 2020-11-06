@@ -1,7 +1,7 @@
 import loadImage from './imageLoader.js'
 import getSprite from './spriteExtractor.js'
 
-export interface ISpritesConfiguration {
+export interface SpritesConfiguration {
   [imageSrc: string]: {
     [spriteId: string]: {
       x: number,
@@ -13,7 +13,7 @@ export interface ISpritesConfiguration {
 }
 
 export default async function loadSprites(
-  spritesConfiguration: ISpritesConfiguration,
+  spritesConfiguration: SpritesConfiguration,
 ): Promise<{[spriteId: string]: HTMLCanvasElement}> {
   const images = await Promise.all(Object.keys(spritesConfiguration).map(
     (imageUrl) => loadImage(imageUrl).then((image) => [imageUrl, image] as [string, HTMLImageElement]),

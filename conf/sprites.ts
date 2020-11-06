@@ -1,4 +1,4 @@
-import {ISpritesConfiguration} from '../engine/spriteLoader.js'
+import {SpritesConfiguration} from '../engine/spriteLoader.js'
 
 export default {
   'images/background.png': {
@@ -42,4 +42,4 @@ export default {
     tree2: {x: 1205, y: 5, width: 282, height: 295},
     truck: {x: 1365, y: 644, width: 100, height: 78},
   },
-} as ISpritesConfiguration
+} as SpritesConfiguration
