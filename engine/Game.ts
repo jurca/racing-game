@@ -62,7 +62,7 @@ export default class Game {
     const now = performance.now()
     // Using requestAnimationFrame has to be able to handle large deltas caused when it 'hibernates' in a background
     // or non-visible tab.
-    const deltaTime = Math.min(1, (now - this.#lastFrameTimestamp) / 1000)
+    const deltaTime = Math.min(1_000, now - this.#lastFrameTimestamp)
     this.#updater.update(this, deltaTime)
     this.#renderer.render(this, deltaTime)
     for (const releasedKey of this.#pendingReleasedKeys) {
