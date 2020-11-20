@@ -8,17 +8,18 @@ export default class Game {
   #pressedKeys: {[key: string]: undefined | boolean} = {}
   #lastFrameTimestamp: number = performance.now()
   #frameRequestId: number = -1
+  readonly #renderer: Renderer
+  readonly #updater: Updater
   readonly #pendingReleasedKeys: string[] = []
   readonly #gameObjects: GameObjectCollection = new GameObjectCollection()
 
-  constructor(
-    private readonly renderer: Renderer,
-    private readonly updater: Updater,
-  ) {
+  constructor(renderer: Renderer, updater: Updater) {
+    this.#renderer = renderer
+    this.#updater = updater
   }
 
   public get camera(): Camera {
-    return this.renderer.camera
+    return this.#renderer.camera
   }
 
   public get gameObjects(): readonly GameObject[] {
@@ -39,8 +40,8 @@ export default class Game {
     this.#lastFrameTimestamp = performance.now()
     this.#frameRequestId = requestAnimationFrame(this.#update)
 
-    this.updater.onRun(this)
-    this.renderer.render(this, 0)
+    this.#updater.onRun(this)
+    this.#renderer.render(this, 0)
   }
 
   public stop(): void {
@@ -48,7 +49,7 @@ export default class Game {
       throw new Error('The engine loop is not running, run the run() method first')
     }
 
-    this.updater.onStop(this)
+    this.#updater.onStop(this)
     cancelAnimationFrame(this.#frameRequestId)
     this.#frameRequestId = -1
   }
@@ -62,8 +63,8 @@ export default class Game {
     // Using requestAnimationFrame has to be able to handle large deltas caused when it 'hibernates' in a background
     // or non-visible tab.
     const deltaTime = Math.min(1, (now - this.#lastFrameTimestamp) / 1000)
-    this.updater.update(this, deltaTime)
-    this.renderer.render(this, deltaTime)
+    this.#updater.update(this, deltaTime)
+    this.#renderer.render(this, deltaTime)
     for (const releasedKey of this.#pendingReleasedKeys) {
       this.#pressedKeys[releasedKey] = false
     }
