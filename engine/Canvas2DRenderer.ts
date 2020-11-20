@@ -1,13 +1,16 @@
 import AbstractRenderer from './AbstractRenderer.js'
 import Camera from './Camera.js'
+import GameObject from './GameObject.js'
 import Point2D from './Point2D.js'
 import Point3D from './Point3D.js'
+import {Color, Polygon, Sprite} from './Renderer.js'
 
 export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
+  #pointOfOrigin: Readonly<Point3D> = new Point3D(0, 0, 0)
 
   constructor(
-    protected canvas: HTMLCanvasElement,
+    protected readonly canvas: HTMLCanvasElement,
     camera: Camera,
   ) {
     super(camera)
@@ -19,45 +22,74 @@ export default class Canvas2DRenderer extends AbstractRenderer {
       throw new Error('The rendering context could not be created for the provided canvas')
     }
     this.renderingContext = renderingContext
+    this.renderingContext.imageSmoothingEnabled = false
   }
 
-  public drawPolygon(
-    color: string,
-    ...points: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, ...ReadonlyArray<Readonly<Point3D>>]
-  ): void {
-    this.renderingContext.fillStyle = color
-    this.renderingContext.beginPath()
-    const firstProjectedPoint = this.camera.project(points[0])
-    this.renderingContext.moveTo(firstProjectedPoint.x, firstProjectedPoint.y)
-    for (const projected of points.slice(1).map((point) => this.camera.project(point))) {
-      this.renderingContext.lineTo(projected.x, projected.y)
+  public renderObject(object: GameObject, deltaTime: number): void {
+    this.#pointOfOrigin = object.absolutePosition
+    super.renderObject(object, deltaTime)
+  }
+
+  public drawPolygon(polygon: Polygon): void {
+    let color: null | string = null
+    let texture: null | Sprite = null
+    if (polygon.surface instanceof Sprite) {
+      texture = polygon.surface
+    } else {
+      color = this.#formatColorForCanvas(polygon.surface)
     }
-    this.renderingContext.closePath()
-    this.renderingContext.fill()
-  }
 
-  public drawRect(color: string, p1: Point2D, p2: Point2D): void {
-    this.renderingContext.fillStyle = color
-    this.renderingContext.fillRect(p1.x, p1.y, p2.x - p1.x, p2.y - p2.y)
-  }
+    const projectedPoints = polygon.points.map(this.#projectPoint)
+    this.#drawPath(projectedPoints)
 
-  public drawFog(color: string, density: number, p1: Point2D, p2: Point2D): void {
-    if (density) {
-      this.renderingContext.globalAlpha = density
-      this.drawRect(color, p1, p2)
-      this.renderingContext.globalAlpha = 1
+    if (color) {
+      this.renderingContext.fillStyle = color
+      this.renderingContext.fill()
+    }
+    if (texture) {
+      this.renderingContext.save()
+      this.renderingContext.clip()
+      const horizontalCoordinates = projectedPoints.map(point => point.x)
+      const verticalCoordinates = projectedPoints.map(point => point.y)
+      const areaX0 = Math.min(...horizontalCoordinates)
+      const areaX1 = Math.max(...horizontalCoordinates)
+      const areaY0 = Math.min(...verticalCoordinates)
+      const areaY1 = Math.max(...verticalCoordinates)
+      this.renderingContext.drawImage(texture.data, areaX0, areaY0, areaX1 - areaX0, areaY1 - areaY0)
+      this.renderingContext.restore()
     }
   }
 
   public drawSprite(
-    sprite: HTMLImageElement | HTMLCanvasElement,
-    x: number,
-    y: number,
+    position: Readonly<Point3D>,
+    sprite: Sprite,
     scaleX: number = 1,
     scaleY: number = scaleX,
+    skewX: number = 0,
+    skewY: number = 0,
   ): void {
-    const spriteWidth = sprite instanceof HTMLImageElement ? sprite.naturalWidth : sprite.width
-    const spriteHeight = sprite instanceof HTMLImageElement ? sprite.naturalHeight : sprite.height
-    this.renderingContext.drawImage(sprite, x, y, spriteWidth * scaleX, spriteHeight * scaleY)
+    const positionOnScreen = this.#projectPoint(position)
+    this.renderingContext.save()
+    this.renderingContext.transform(scaleX, skewY, skewX, scaleY, positionOnScreen.x, positionOnScreen.y)
+    this.renderingContext.drawImage(sprite.data, -sprite.width / 2, -sprite.height)
+    this.renderingContext.restore()
+  }
+
+  #drawPath = (points: readonly Readonly<Point2D>[]): void => { // TypeScript 4.0.5 does not support private methods yet
+    this.renderingContext.beginPath()
+    this.renderingContext.moveTo(points[0].x, points[0].y)
+    for (const point of points.slice(1)) {
+      this.renderingContext.lineTo(point.x, point.y)
+    }
+    this.renderingContext.closePath()
+  }
+
+  #formatColorForCanvas = (color: Color): string => { // TypeScript 4.0.5 does not support private methods yet
+    const channels = [color.red, color.green, color.blue, color.alpha]
+    return `rgba(${channels.join(', ')})`
+  }
+
+  #projectPoint = (point: Readonly<Point3D>): Point2D => { // TypeScript 4.0.5 does not support private methods yet
+    return this.camera.project(this.#pointOfOrigin.add(point))
   }
 }

@@ -2,8 +2,10 @@ import SPRITES_CONFIGURATION from '../conf/sprites.js'
 import Canvas2DRenderer from '../engine/Canvas2DRenderer.js'
 import Game from '../engine/Game.js'
 import Point3D from '../engine/Point3D.js'
+import Renderer from '../engine/Renderer.js'
 import loadSprites from '../engine/spriteLoader.js'
 import TickUpdater from '../engine/TickUpdater.js'
+import GameObject from './object/GameObject.js'
 import RoadSegment from './object/RoadSegment.js'
 import Pseudo3DCamera from './Pseudo3DCamera.js'
 
@@ -11,6 +13,39 @@ const VIEWPORT_WIDTH = 640
 const VIEWPORT_HEIGHT = 480
 const CAMERA_FIELD_OF_VIEW = 100 // degrees
 const CAMERA_VERTICAL_OFFSET = 1_000 // vertical distance from the current road segment it is above
+
+const COLORS = {
+  LANE_MARKER: {
+    red: 204,
+    green: 204,
+    blue: 204,
+    alpha: 255,
+  },
+  ROAD_DARK: {
+    red: 112,
+    green: 112,
+    blue: 112,
+    alpha: 255,
+  },
+  ROAD_LIGHT: {
+    red: 119,
+    green: 119,
+    blue: 119,
+    alpha: 255,
+  },
+  RUMBLE_DARK: {
+    red: 153,
+    green: 153,
+    blue: 153,
+    alpha: 255,
+  },
+  RUMBLE_LIGHT: {
+    red: 204,
+    green: 204,
+    blue: 204,
+    alpha: 255,
+  },
+}
 
 async function main() {
   const canvas = document.getElementById('game') as HTMLCanvasElement
@@ -28,6 +63,7 @@ async function main() {
     new Canvas2DRenderer(canvas, camera),
     new TickUpdater(1_000 / 60),
   )
+
   const widthOffsets = [0, 450, 500]
   for (let i = 0; i < 1000; i++) {
     game.addGameObject(new RoadSegment(
@@ -41,9 +77,9 @@ async function main() {
       50,
       200,
       {
-        laneMarker: '#cccccc',
-        road: i % 2 ? '#707070' : '#777777',
-        rumble: i % 2 ? '#cccccc' : '#999999',
+        laneMarker: COLORS.LANE_MARKER,
+        road: i % 2 ? COLORS.ROAD_DARK : COLORS.ROAD_LIGHT,
+        rumble: i % 2 ? COLORS.RUMBLE_LIGHT : COLORS.RUMBLE_DARK,
       },
     ))
     game.addGameObject(new RoadSegment(
@@ -57,13 +93,64 @@ async function main() {
       50,
       110,
       {
-        laneMarker: '#cccccc',
-        road: i % 2 ? '#707070' : '#777777',
-        rumble: i % 2 ? '#cccccc' : '#999999',
+        laneMarker: COLORS.LANE_MARKER,
+        road: i % 2 ? COLORS.ROAD_DARK : COLORS.ROAD_LIGHT,
+        rumble: i % 2 ? COLORS.RUMBLE_LIGHT : COLORS.RUMBLE_DARK,
       },
     ))
   }
+
+  const spriteTest = Object.assign(new GameObject(new Point3D(0, 1_200, 1_000)), {
+    tickCounter: 0,
+    render(renderer: Renderer): void {
+      renderer.drawSprite(
+        new Point3D(0, 0, 0),
+        sprites.billboard6,
+        0.5 + (this.tickCounter % 32) / 32,
+        0.5 + (this.tickCounter % 48) / 48,
+        0 + (this.tickCounter > 256 ? (-0.5 + (this.tickCounter % 24) / 24) : 0),
+        0 + (this.tickCounter > 256 ? (-0.5 + (this.tickCounter % 32) / 32) : 0),
+      )
+    },
+    updateTick(): void {
+      this.tickCounter++
+    },
+  })
+  game.addGameObject(spriteTest)
+
+  const spriteTexturedPolygonTest = Object.assign(new GameObject(new Point3D(200, 0, 900)), {
+    tickCounter: 0,
+    render(renderer: Renderer): void {
+      const point1 = new Point3D(0, 0, 0)
+      const point2 = new Point3D(512, 512, 0)
+      renderer.drawPolygon({
+        surface: {red: 128, green: 0, blue: 0, alpha: 255},
+        points: [
+          point1,
+          new Point3D(point2.x + 24 * 16, point1.y, 0),
+          new Point3D(point2.x + 24 * 16, point2.y + 32 * 16, 0),
+          new Point3D(point1.x, point2.y + 32 * 16, 0),
+        ],
+      })
+      renderer.drawPolygon({
+        surface: sprites.billboard1,
+        points: [
+          new Point3D(point1.x, point1.y, 0),
+          new Point3D(point2.x, point1.y + this.tickCounter % 32 * 16, 0),
+          new Point3D(point2.x + this.tickCounter % 24 * 16, point2.y + this.tickCounter % 32 * 16, 0),
+          new Point3D(point1.x + this.tickCounter % 24 * 16, point2.y, 0),
+        ],
+      })
+    },
+    updateTick(): void {
+      this.tickCounter++
+    },
+  })
+  game.addGameObject(spriteTexturedPolygonTest)
+
   game.run()
+  console.log(game)
+  setTimeout(() => game.stop(), 10_000)
 }
 
 addEventListener('load', main)

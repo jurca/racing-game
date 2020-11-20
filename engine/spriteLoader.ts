@@ -1,4 +1,5 @@
 import loadImage from './imageLoader.js'
+import {Sprite} from './Renderer.js'
 import getSprite from './spriteExtractor.js'
 
 export interface SpritesConfiguration {
@@ -14,7 +15,7 @@ export interface SpritesConfiguration {
 
 export default async function loadSprites(
   spritesConfiguration: SpritesConfiguration,
-): Promise<{[spriteId: string]: HTMLCanvasElement}> {
+): Promise<{[spriteId: string]: Sprite}> {
   const images = await Promise.all(Object.keys(spritesConfiguration).map(
     (imageUrl) => loadImage(imageUrl).then((image) => [imageUrl, image] as [string, HTMLImageElement]),
   ))
@@ -22,16 +23,13 @@ export default async function loadSprites(
     ([imageUrl, image]) => {
       const spriteConfigs = spritesConfiguration[imageUrl]
       return Object.fromEntries(Object.entries(spriteConfigs).map(
-        ([spriteId, spriteConfig]) => [
-          spriteId,
-          getSprite(
-            image,
-            spriteConfig.x,
-            spriteConfig.y,
-            spriteConfig.width,
-            spriteConfig.height,
-          ),
-        ],
+        ([spriteId, spriteConfig]) => {
+          const spriteData = getSprite(image, spriteConfig.x, spriteConfig.y, spriteConfig.width, spriteConfig.height)
+          return [
+            spriteId,
+            new Sprite(spriteData, spriteData.width, spriteData.height),
+          ]
+        },
       ))
     },
   ).reduce((allSprites, spritePack) => Object.assign(allSprites, spritePack), {})

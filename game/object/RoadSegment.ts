@@ -1,20 +1,16 @@
 import Canvas2DRenderer from '../../engine/Canvas2DRenderer.js'
 import Point3D from '../../engine/Point3D.js'
+import {Color, Polygon} from '../../engine/Renderer.js'
 import GameObject from './GameObject.js'
 
 interface RoadSegmentColorConfiguration {
-  readonly road: string
-  readonly laneMarker: string
-  readonly rumble: string
-}
-
-interface RoadPolygon {
-  readonly points: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>]
-  readonly color: string,
+  readonly road: Color
+  readonly laneMarker: Color
+  readonly rumble: Color
 }
 
 export default class RoadSegment extends GameObject {
-  readonly #polygons: readonly RoadPolygon[]
+  readonly #polygons: readonly Polygon[]
 
   constructor(
     position: Point3D,
@@ -49,7 +45,7 @@ export default class RoadSegment extends GameObject {
       throw new RangeError(`The rumbleWidth must be a non-negative number, ${rumbleWidth} was provided`)
     }
 
-    const polygons: RoadPolygon[] = []
+    const polygons: Polygon[] = []
 
     const leadingLeftCorner = new Point3D(-leadingWidth / 2, 0, 0)
     const leadingRightCorner = new Point3D(leadingWidth / 2, 0, 0)
@@ -63,11 +59,11 @@ export default class RoadSegment extends GameObject {
     if (rumbleWidth) {
       polygons.push(
         {
-          color: colorConfiguration.rumble,
+          surface: colorConfiguration.rumble,
           points: [leadingLeftCorner, leadingLeftRumbleInnerCorner, trailingLeftRumbleInnerCorner, trailingLeftCorner],
         },
         {
-          color: colorConfiguration.rumble,
+          surface: colorConfiguration.rumble,
           points: [
             leadingRightRumbleInnerCorner,
             leadingRightCorner,
@@ -79,7 +75,7 @@ export default class RoadSegment extends GameObject {
     }
 
     polygons.push({
-      color: colorConfiguration.road,
+      surface: colorConfiguration.road,
       points: [
         leadingLeftRumbleInnerCorner,
         leadingRightRumbleInnerCorner,
@@ -95,7 +91,7 @@ export default class RoadSegment extends GameObject {
       const trailingCenter = trailingLeftRumbleInnerCorner.add(new Point3D(markerIndex * trailingMarkerSpacing))
       const centerOffset = new Point3D(laneMarkerWidth / 2)
       polygons.push({
-        color: colorConfiguration.laneMarker,
+        surface: colorConfiguration.laneMarker,
         points: [
           leadingCenter.subtract(centerOffset),
           leadingCenter.add(centerOffset),
@@ -111,14 +107,6 @@ export default class RoadSegment extends GameObject {
   public render(renderer: Canvas2DRenderer, deltaTime: number): void {
     super.render(renderer, deltaTime)
 
-    for (const polygon of this.#polygons) {
-      renderer.drawPolygon(
-        polygon.color,
-        this.getAbsolutePosition(polygon.points[0]),
-        this.getAbsolutePosition(polygon.points[1]),
-        this.getAbsolutePosition(polygon.points[2]),
-        this.getAbsolutePosition(polygon.points[3]),
-      )
-    }
+    renderer.drawMesh(this.#polygons)
   }
 }
