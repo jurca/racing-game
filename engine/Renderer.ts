@@ -23,7 +23,7 @@ export type Surface = Color | Sprite
 
 export interface Polygon {
   readonly surface: Surface
-  readonly points: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, ...readonly Readonly<Point3D>[]]
+  readonly vertices: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, ...readonly Readonly<Point3D>[]]
 }
 
 export type Mesh = readonly Polygon[]

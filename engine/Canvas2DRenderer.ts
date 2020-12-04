@@ -39,8 +39,8 @@ export default class Canvas2DRenderer extends AbstractRenderer {
       color = this.#formatColorForCanvas(polygon.surface)
     }
 
-    const projectedPoints = polygon.points.map(this.#projectPoint)
-    this.#drawPath(projectedPoints)
+    const projectedVertices = polygon.vertices.map(this.#projectPoint)
+    this.#drawPath(projectedVertices)
 
     if (color) {
       this.renderingContext.fillStyle = color
@@ -49,8 +49,8 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     if (texture) {
       this.renderingContext.save()
       this.renderingContext.clip()
-      const horizontalCoordinates = projectedPoints.map(point => point.x)
-      const verticalCoordinates = projectedPoints.map(point => point.y)
+      const horizontalCoordinates = projectedVertices.map(point => point.x)
+      const verticalCoordinates = projectedVertices.map(point => point.y)
       const areaX0 = Math.min(...horizontalCoordinates)
       const areaX1 = Math.max(...horizontalCoordinates)
       const areaY0 = Math.min(...verticalCoordinates)
