@@ -7,6 +7,7 @@ import loadSprites from '../engine/spriteLoader.js'
 import TickUpdater from '../engine/TickUpdater.js'
 import GameObject from './object/GameObject.js'
 import RoadSegment from './object/RoadSegment.js'
+import SpriteObject from './object/SpriteObject.js'
 import Pseudo3DCamera from './Pseudo3DCamera.js'
 
 const VIEWPORT_WIDTH = 640
@@ -99,6 +100,8 @@ async function main() {
       },
     ))
   }
+
+  game.addGameObject(new SpriteObject(new Point3D(-750, 240, 870), sprites.billboard2))
 
   const spriteTest = Object.assign(new GameObject(new Point3D(0, 1_200, 1_000)), {
     tickCounter: 0,
