@@ -15,4 +15,6 @@ export default abstract class AbstractCamera implements Camera {
   public translatePosition(absolutePosition: Readonly<Point3D>): Readonly<Point3D> {
     return absolutePosition.subtract(this.position)
   }
+
+  public abstract castRay(screenPoint: Readonly<Point2D>, targetDepth: number): Point3D
 }

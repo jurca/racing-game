@@ -9,4 +9,6 @@ export default interface Camera {
   project(point: Readonly<Point3D>): Point2D
 
   translatePosition(absolutePosition: Readonly<Point3D>): Point3D
+
+  castRay(screenPoint: Readonly<Point2D>, targetDepth: number): Point3D
 }
