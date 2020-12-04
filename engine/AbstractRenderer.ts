@@ -31,9 +31,16 @@ export default abstract class AbstractRenderer implements Renderer {
   public abstract drawSprite(
     position: Readonly<Point3D>,
     sprite: Sprite,
-    scaleX: number,
-    scaleY: number,
-    skewX: number,
-    skewY: number,
+    scaleX?: number,
+    scaleY?: number,
+    skewX?: number,
+    skewY?: number,
+  ): void
+
+  public abstract drawDistanceScaledSprite(
+    position: Readonly<Point3D>,
+    sprite: Sprite,
+    skewX?: number,
+    skewY?: number,
   ): void
 }
