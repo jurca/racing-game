@@ -19,15 +19,16 @@ export default class TickUpdater extends Updater {
       }
     }
     while (this.#pendingTimeDelta >= this.tickDuration) {
-      this.updateTick(game)
       this.#pendingTimeDelta -= this.tickDuration
+      const isLastTickInSequence = this.#pendingTimeDelta < this.tickDuration
+      this.updateTick(game, isLastTickInSequence)
     }
   }
 
-  public updateTick(game: Game): void {
+  public updateTick(game: Game, isLastTickInSequence: boolean): void {
     for (const gameObject of game.gameObjects) {
       if (gameObject instanceof TickUpdatedGameObject) {
-        gameObject.updateTick(game)
+        gameObject.updateTick(game, isLastTickInSequence)
       }
     }
   }

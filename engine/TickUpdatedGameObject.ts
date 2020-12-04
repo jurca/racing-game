@@ -12,9 +12,9 @@ export default abstract class TickUpdatedGameObject extends AbstractGameObject {
     )
   }
 
-  public updateTick(game: Game): void {
+  public updateTick(game: Game, isLastTickInSequence: boolean): void {
     for (const gameObject of this.subObjects) {
-      gameObject.updateTick(game)
+      gameObject.updateTick(game, isLastTickInSequence)
     }
   }
 
