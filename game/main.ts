@@ -128,7 +128,7 @@ async function main() {
       const point2 = new Point3D(512, 512, 0)
       renderer.drawPolygon({
         surface: {red: 128, green: 0, blue: 0, alpha: 255},
-        points: [
+        vertices: [
           point1,
           new Point3D(point2.x + 24 * 16, point1.y, 0),
           new Point3D(point2.x + 24 * 16, point2.y + 32 * 16, 0),
@@ -137,7 +137,7 @@ async function main() {
       })
       renderer.drawPolygon({
         surface: sprites.billboard1,
-        points: [
+        vertices: [
           new Point3D(point1.x, point1.y, 0),
           new Point3D(point2.x, point1.y + this.tickCounter % 32 * 16, 0),
           new Point3D(point2.x + this.tickCounter % 24 * 16, point2.y + this.tickCounter % 32 * 16, 0),

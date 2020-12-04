@@ -59,11 +59,16 @@ export default class RoadSegment extends GameObject {
       polygons.push(
         {
           surface: colorConfiguration.rumble,
-          points: [leadingLeftCorner, leadingLeftRumbleInnerCorner, trailingLeftRumbleInnerCorner, trailingLeftCorner],
+          vertices: [
+            leadingLeftCorner,
+            leadingLeftRumbleInnerCorner,
+            trailingLeftRumbleInnerCorner,
+            trailingLeftCorner,
+          ],
         },
         {
           surface: colorConfiguration.rumble,
-          points: [
+          vertices: [
             leadingRightRumbleInnerCorner,
             leadingRightCorner,
             trailingRightCorner,
@@ -75,7 +80,7 @@ export default class RoadSegment extends GameObject {
 
     polygons.push({
       surface: colorConfiguration.road,
-      points: [
+      vertices: [
         leadingLeftRumbleInnerCorner,
         leadingRightRumbleInnerCorner,
         trailingRightRumbleInnerCorner,
@@ -91,7 +96,7 @@ export default class RoadSegment extends GameObject {
       const centerOffset = new Point3D(laneMarkerWidth / 2)
       polygons.push({
         surface: colorConfiguration.laneMarker,
-        points: [
+        vertices: [
           leadingCenter.subtract(centerOffset),
           leadingCenter.add(centerOffset),
           trailingCenter.add(centerOffset),
