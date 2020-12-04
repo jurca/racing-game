@@ -1,6 +1,5 @@
-import Canvas2DRenderer from '../../engine/Canvas2DRenderer.js'
 import Point3D from '../../engine/Point3D.js'
-import {Color, Polygon} from '../../engine/Renderer.js'
+import Renderer, {Color, Polygon} from '../../engine/Renderer.js'
 import GameObject from './GameObject.js'
 
 interface RoadSegmentColorConfiguration {
@@ -104,7 +103,7 @@ export default class RoadSegment extends GameObject {
     this.#polygons = polygons
   }
 
-  public render(renderer: Canvas2DRenderer, deltaTime: number): void {
+  public render(renderer: Renderer, deltaTime: number): void {
     super.render(renderer, deltaTime)
 
     renderer.drawMesh(this.#polygons)
