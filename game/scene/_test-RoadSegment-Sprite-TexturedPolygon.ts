@@ -3,6 +3,7 @@ import Renderer, {Color, Sprite} from '../../engine/Renderer.js'
 import GameObject from '../object/GameObject.js'
 import RoadSegment from '../object/RoadSegment.js'
 import SpriteObject from '../object/SpriteObject.js'
+import Pseudo3DCamera from '../Pseudo3DCamera.js'
 import Scene from './Scene.js'
 
 interface SceneSprites {
@@ -10,6 +11,10 @@ interface SceneSprites {
   readonly spriteScaleSkewTest: Sprite
   readonly polygonTexture: Sprite
 }
+const VIEWPORT_WIDTH = 640
+const VIEWPORT_HEIGHT = 480
+const CAMERA_VERTICAL_FIELD_OF_VIEW = 100 // degrees
+const CAMERA_VERTICAL_OFFSET = 1_000 // vertical distance from the current road segment it is above
 
 const COLORS = {
   LANE_MARKER: new Color(204, 204, 204),
@@ -113,3 +118,10 @@ export default function makeScene(sprites: SceneSprites): Scene {
 
   return scene
 }
+
+export const defaultCamera = new Pseudo3DCamera(
+  new Point3D(0, CAMERA_VERTICAL_OFFSET, 0),
+  VIEWPORT_WIDTH,
+  VIEWPORT_HEIGHT,
+  CAMERA_VERTICAL_FIELD_OF_VIEW,
+)
