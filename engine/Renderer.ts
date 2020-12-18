@@ -30,11 +30,14 @@ export class Color {
 }
 
 export class Sprite {
+  public readonly width: number
+  public readonly height: number
+
   constructor(
     public readonly data: HTMLCanvasElement | HTMLImageElement,
-    public readonly width: number,
-    public readonly height: number,
   ) {
+    this.width = 'naturalWidth' in data ? data.naturalWidth : data.width
+    this.height = 'naturalHeight' in data ? data.naturalHeight : data.height
   }
 }
 

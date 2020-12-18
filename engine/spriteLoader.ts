@@ -27,7 +27,7 @@ export default async function loadSprites(
           const spriteData = getSprite(image, spriteConfig.x, spriteConfig.y, spriteConfig.width, spriteConfig.height)
           return [
             spriteId,
-            new Sprite(spriteData, spriteData.width, spriteData.height),
+            new Sprite(spriteData),
           ]
         },
       ))
