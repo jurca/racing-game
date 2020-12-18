@@ -2,7 +2,7 @@ import SPRITES_CONFIGURATION from '../conf/sprites.js'
 import Canvas2DRenderer from '../engine/Canvas2DRenderer.js'
 import Game from '../engine/Game.js'
 import Point3D from '../engine/Point3D.js'
-import Renderer from '../engine/Renderer.js'
+import Renderer, {Color} from '../engine/Renderer.js'
 import loadSprites from '../engine/spriteLoader.js'
 import TickUpdater from '../engine/TickUpdater.js'
 import GameObject from './object/GameObject.js'
@@ -16,36 +16,11 @@ const CAMERA_FIELD_OF_VIEW = 100 // degrees
 const CAMERA_VERTICAL_OFFSET = 1_000 // vertical distance from the current road segment it is above
 
 const COLORS = {
-  LANE_MARKER: {
-    red: 204,
-    green: 204,
-    blue: 204,
-    alpha: 255,
-  },
-  ROAD_DARK: {
-    red: 112,
-    green: 112,
-    blue: 112,
-    alpha: 255,
-  },
-  ROAD_LIGHT: {
-    red: 119,
-    green: 119,
-    blue: 119,
-    alpha: 255,
-  },
-  RUMBLE_DARK: {
-    red: 153,
-    green: 153,
-    blue: 153,
-    alpha: 255,
-  },
-  RUMBLE_LIGHT: {
-    red: 204,
-    green: 204,
-    blue: 204,
-    alpha: 255,
-  },
+  LANE_MARKER: new Color(204, 204, 204),
+  ROAD_DARK: new Color(112, 112, 112),
+  ROAD_LIGHT: new Color(119, 119, 119),
+  RUMBLE_DARK: new Color(153, 153, 153),
+  RUMBLE_LIGHT: new Color(204, 204, 204),
 }
 
 async function main() {
@@ -127,7 +102,7 @@ async function main() {
       const point1 = new Point3D(0, 0, 0)
       const point2 = new Point3D(512, 512, 0)
       renderer.drawPolygon({
-        surface: {red: 128, green: 0, blue: 0, alpha: 255},
+        surface: new Color(128, 0, 0),
         vertices: [
           point1,
           new Point3D(point2.x + 24 * 16, point1.y, 0),

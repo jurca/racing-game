@@ -3,7 +3,7 @@ import Camera from './Camera.js'
 import GameObject from './GameObject.js'
 import Point2D from './Point2D.js'
 import Point3D from './Point3D.js'
-import {Color, Polygon, Sprite} from './Renderer.js'
+import {Polygon, Sprite} from './Renderer.js'
 
 export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
@@ -36,7 +36,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     if (polygon.surface instanceof Sprite) {
       texture = polygon.surface
     } else {
-      color = this.#formatColorForCanvas(polygon.surface)
+      color = polygon.surface.asCssString
     }
 
     const projectedVertices = polygon.vertices.map(this.#projectPoint)
@@ -95,11 +95,6 @@ export default class Canvas2DRenderer extends AbstractRenderer {
       this.renderingContext.lineTo(point.x, point.y)
     }
     this.renderingContext.closePath()
-  }
-
-  #formatColorForCanvas = (color: Color): string => { // TypeScript 4.0.5 does not support private methods yet
-    const channels = [color.red, color.green, color.blue, color.alpha]
-    return `rgba(${channels.join(', ')})`
   }
 
   #projectPoint = (point: Readonly<Point3D>): Point2D => { // TypeScript 4.0.5 does not support private methods yet
