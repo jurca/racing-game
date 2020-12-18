@@ -49,7 +49,7 @@ export default abstract class AbstractGameObject implements GameObject {
 
   public render(renderer: Renderer, deltaTime: number): void {
     for (const gameObject of this.#subGameObjects.gameObjects) {
-      gameObject.render(renderer, deltaTime)
+      renderer.renderObject(gameObject, deltaTime)
     }
   }
 
