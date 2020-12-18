@@ -23,7 +23,7 @@ const COLORS = {
   RUMBLE_LIGHT: new Color(204, 204, 204),
 }
 
-async function main() {
+addEventListener('load', async () => {
   const canvas = document.getElementById('game') as HTMLCanvasElement
   canvas.width = VIEWPORT_WIDTH
   canvas.height = VIEWPORT_HEIGHT
@@ -129,6 +129,4 @@ async function main() {
   game.run()
   console.log(game)
   setTimeout(() => game.stop(), 10_000)
-}
-
-addEventListener('load', main)
+})
