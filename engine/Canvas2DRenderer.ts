@@ -15,6 +15,8 @@ export default class Canvas2DRenderer extends AbstractRenderer {
   ) {
     super(camera)
 
+    canvas.width = camera.viewportWidth
+    canvas.height = camera.viewportHeight
     const renderingContext = canvas.getContext('2d', {
       alpha: false,
     })

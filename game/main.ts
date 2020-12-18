@@ -14,8 +14,6 @@ const CAMERA_VERTICAL_OFFSET = 1_000 // vertical distance from the current road 
 
 addEventListener('load', async () => {
   const canvas = document.getElementById('game') as HTMLCanvasElement
-  canvas.width = VIEWPORT_WIDTH
-  canvas.height = VIEWPORT_HEIGHT
   const sprites = await loadSprites(SPRITES_CONFIGURATION)
   console.log(sprites)
   const camera = new Pseudo3DCamera(
