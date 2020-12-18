@@ -3,23 +3,25 @@ import Point2D from '../engine/Point2D.js'
 import Point3D from '../engine/Point3D.js'
 
 export default class Pseudo3DCamera extends AbstractCamera {
-  private readonly cameraDepth = 1 / Math.tan((this.fieldOfView / 2) * Math.PI / 180)
+  private readonly horizontalCameraDepth = 1 / Math.tan((this.horizontalFieldOfView / 2) * Math.PI / 180)
+  private readonly verticalCameraDepth = 1 / Math.tan((this.verticalFieldOfView / 2) * Math.PI / 180)
 
   constructor(
-    public readonly fieldOfView: number,
+    position: Point3D,
     viewportWidth: number,
     viewportHeight: number,
-    position: Point3D,
+    verticalFieldOfView: number,
   ) {
-    super(viewportWidth, viewportHeight, position)
+    super(position, viewportWidth, viewportHeight, verticalFieldOfView)
   }
 
   public project(point: Readonly<Point3D>): Readonly<Point2D> {
     const translatedPoint = this.translatePosition(point)
-    const scale = this.cameraDepth / translatedPoint.z
+    const horizontalScale = this.horizontalCameraDepth / translatedPoint.z
+    const verticalScale = this.verticalCameraDepth / translatedPoint.z
     const projectedPoint = new Point2D(
-      translatedPoint.x * scale,
-      translatedPoint.y * scale,
+      translatedPoint.x * horizontalScale,
+      translatedPoint.y * verticalScale,
     )
     return new Point2D( // scale
       this.viewportWidth / 2 + this.viewportWidth / 2 * projectedPoint.x,
@@ -33,7 +35,12 @@ export default class Pseudo3DCamera extends AbstractCamera {
       (this.viewportHeight / 2 - screenPoint.y) / (this.viewportHeight / 2),
     )
     const translatedDepth = this.translatePosition(new Point3D(0, 0, targetDepth)).z
-    const scale = this.cameraDepth / translatedDepth
-    return new Point3D(projectedPoint.x / scale, projectedPoint.y / scale, targetDepth).add(this.position)
+    const horizontalScale = this.horizontalCameraDepth / translatedDepth
+    const verticalScale = this.verticalCameraDepth / translatedDepth
+    return new Point3D(
+      projectedPoint.x / horizontalScale,
+      projectedPoint.y / verticalScale,
+      targetDepth,
+    ).add(this.position)
   }
 }

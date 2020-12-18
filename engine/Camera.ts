@@ -4,6 +4,9 @@ import Point3D from './Point3D.js'
 export default interface Camera {
   readonly viewportWidth: number
   readonly viewportHeight: number
+  readonly viewportAspectRatio: number
+  readonly verticalFieldOfView: number
+  readonly horizontalFieldOfView: number
   readonly position: Point3D
 
   project(point: Readonly<Point3D>): Point2D
