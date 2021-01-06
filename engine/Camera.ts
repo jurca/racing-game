@@ -7,7 +7,11 @@ export default interface Camera {
   readonly viewportAspectRatio: number
   readonly verticalFieldOfView: number
   readonly horizontalFieldOfView: number
+  readonly minVisibleDepth: number
+  readonly maxVisibleDepth: number
   readonly position: Point3D
+
+  isInVisibleDepth(point: Readonly<Point3D>): boolean
 
   project(point: Readonly<Point3D>): Point2D
 

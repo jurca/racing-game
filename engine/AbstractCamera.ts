@@ -8,6 +8,8 @@ export default abstract class AbstractCamera implements Camera {
     public readonly viewportWidth: number,
     public readonly viewportHeight: number,
     public readonly verticalFieldOfView: number,
+    public readonly minVisibleDepth: number,
+    public readonly maxVisibleDepth: number,
   ) {
   }
 
@@ -19,6 +21,11 @@ export default abstract class AbstractCamera implements Camera {
     const verticalFieldOfViewRad = this.verticalFieldOfView * Math.PI / 180
     const horizontalFieldOfViewRad = 2 * Math.atan(Math.tan(verticalFieldOfViewRad * 0.5) * this.viewportAspectRatio)
     return horizontalFieldOfViewRad * 180 / Math.PI
+  }
+
+  public isInVisibleDepth(point: Readonly<Point3D>): boolean {
+    const translatedPoint = this.translatePosition(point)
+    return translatedPoint.z >= this.minVisibleDepth && translatedPoint.z <= this.maxVisibleDepth
   }
 
   public abstract project(point: Readonly<Point3D>): Readonly<Point2D>

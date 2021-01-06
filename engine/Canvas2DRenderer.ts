@@ -33,6 +33,10 @@ export default class Canvas2DRenderer extends AbstractRenderer {
   }
 
   public drawPolygon(polygon: Polygon): void {
+    if (!polygon.vertices.every(vertex => this.camera.isInVisibleDepth(this.#pointOfOrigin.add(vertex)))) {
+      return
+    }
+
     let color: null | string = null
     let texture: null | Sprite = null
     if (polygon.surface instanceof Sprite) {

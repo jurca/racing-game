@@ -2,6 +2,9 @@ import AbstractCamera from '../engine/AbstractCamera.js'
 import Point2D from '../engine/Point2D.js'
 import Point3D from '../engine/Point3D.js'
 
+const MIN_VISIBLE_DEPTH = 64
+const MAX_VISIBLE_DEPTH = Number.POSITIVE_INFINITY
+
 export default class Pseudo3DCamera extends AbstractCamera {
   private readonly horizontalCameraDepth = 1 / Math.tan((this.horizontalFieldOfView / 2) * Math.PI / 180)
   private readonly verticalCameraDepth = 1 / Math.tan((this.verticalFieldOfView / 2) * Math.PI / 180)
@@ -12,7 +15,7 @@ export default class Pseudo3DCamera extends AbstractCamera {
     viewportHeight: number,
     verticalFieldOfView: number,
   ) {
-    super(position, viewportWidth, viewportHeight, verticalFieldOfView)
+    super(position, viewportWidth, viewportHeight, verticalFieldOfView, MIN_VISIBLE_DEPTH, MAX_VISIBLE_DEPTH)
   }
 
   public project(point: Readonly<Point3D>): Readonly<Point2D> {
