@@ -74,6 +74,10 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     skewX: number = 0,
     skewY: number = 0,
   ): void {
+    if (!this.camera.isInVisibleDepth(this.#pointOfOrigin.add(position))) {
+      return
+    }
+
     const positionOnScreen = this.#projectPoint(position)
     this.renderingContext.save()
     this.renderingContext.transform(scaleX, skewY, skewX, scaleY, positionOnScreen.x, positionOnScreen.y)
@@ -87,6 +91,10 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     skewX: number = 0,
     skewY: number = 0,
   ): void {
+    if (!this.camera.isInVisibleDepth(this.#pointOfOrigin.add(position))) {
+      return
+    }
+
     const spriteTopCenter = position.add(new Point3D(0, sprite.height))
     const bottomCenterOnScreen = this.#projectPoint(position)
     const topCenterOnScreen = this.#projectPoint(spriteTopCenter)
