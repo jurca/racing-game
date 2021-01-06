@@ -88,6 +88,8 @@ export default class Canvas2DRenderer extends AbstractRenderer {
   public drawDistanceScaledSprite(
     position: Readonly<Point3D>,
     sprite: Sprite,
+    scaleX: number = 1,
+    scaleY: number = scaleX,
     skewX: number = 0,
     skewY: number = 0,
   ): void {
@@ -99,7 +101,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     const bottomCenterOnScreen = this.#projectPoint(position)
     const topCenterOnScreen = this.#projectPoint(spriteTopCenter)
     const scale = Math.abs(topCenterOnScreen.y - bottomCenterOnScreen.y) / sprite.height
-    this.drawSprite(position, sprite, scale, scale, skewX, skewY)
+    this.drawSprite(position, sprite, scale * scaleX, scale * scaleY, skewX, skewY)
   }
 
   #drawPath = (points: readonly Readonly<Point2D>[]): void => { // TypeScript 4.0.5 does not support private methods yet

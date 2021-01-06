@@ -70,5 +70,12 @@ export default interface Renderer {
     skewY?: number,
   ): void
 
-  drawDistanceScaledSprite(position: Readonly<Point3D>, sprite: Sprite, skewX?: number, skewY?: number): void
+  drawDistanceScaledSprite(
+    position: Readonly<Point3D>,
+    sprite: Sprite,
+    scaleX?: number,
+    scaleY?: number,
+    skewX?: number,
+    skewY?: number,
+  ): void
 }
