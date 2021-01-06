@@ -43,7 +43,7 @@ export default class Pseudo3DCamera extends AbstractCamera {
     return new Point3D(
       projectedPoint.x / horizontalScale,
       projectedPoint.y / verticalScale,
-      targetDepth,
+      targetDepth - this.position.z,
     ).add(this.position)
   }
 }
