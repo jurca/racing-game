@@ -35,7 +35,7 @@ export default class Pseudo3DCamera extends AbstractCamera {
   public castRay(screenPoint: Readonly<Point2D>, targetDepth: number): Point3D {
     const projectedPoint = new Point2D(
       (screenPoint.x - this.viewportWidth / 2) / (this.viewportWidth / 2),
-      (this.viewportHeight / 2 - screenPoint.y) / (this.viewportHeight / 2),
+      -(screenPoint.y - this.viewportHeight / 2) / (this.viewportHeight / 2),
     )
     const translatedDepth = this.translatePosition(new Point3D(0, 0, targetDepth)).z
     const horizontalScale = this.horizontalCameraDepth / translatedDepth
