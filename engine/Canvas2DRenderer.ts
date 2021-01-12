@@ -1,5 +1,6 @@
 import AbstractRenderer from './AbstractRenderer.js'
 import Camera from './Camera.js'
+import Game from './Game.js'
 import GameObject from './GameObject.js'
 import Point2D from './Point2D.js'
 import Point3D from './Point3D.js'
@@ -8,10 +9,12 @@ import {Polygon, Sprite} from './Renderer.js'
 export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
   #pointOfOrigin: Readonly<Point3D> = new Point3D(0, 0, 0)
+  readonly #clearEachFrame: boolean
 
   constructor(
     protected readonly canvas: HTMLCanvasElement,
     camera: Camera,
+    clearEachFrame: boolean,
   ) {
     super(camera)
 
@@ -25,6 +28,15 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     }
     this.renderingContext = renderingContext
     this.renderingContext.imageSmoothingEnabled = false
+
+    this.#clearEachFrame = clearEachFrame
+  }
+
+  public render(game: Game, deltaTime: number): void {
+    if (this.#clearEachFrame) {
+      this.renderingContext.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    }
+    super.render(game, deltaTime)
   }
 
   public renderObject(object: GameObject, deltaTime: number): void {

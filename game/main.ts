@@ -10,7 +10,7 @@ addEventListener('load', async () => {
   const sprites = await loadSprites(SPRITES_CONFIGURATION)
   console.log(sprites)
   const game = new Game(
-    new Canvas2DRenderer(canvas, defaultCamera),
+    new Canvas2DRenderer(canvas, defaultCamera, false),
     new TickUpdater(1_000 / 60),
   )
 
