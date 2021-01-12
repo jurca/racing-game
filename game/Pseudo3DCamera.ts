@@ -26,9 +26,9 @@ export default class Pseudo3DCamera extends AbstractCamera {
       translatedPoint.x * horizontalScale,
       translatedPoint.y * verticalScale,
     )
-    return new Point2D( // scale
-      this.viewportWidth / 2 + this.viewportWidth / 2 * projectedPoint.x,
-      this.viewportHeight / 2 - this.viewportHeight / 2 * projectedPoint.y,
+    return new Point2D(
+      Math.round(this.viewportWidth / 2 + this.viewportWidth / 2 * projectedPoint.x),
+      Math.round(this.viewportHeight / 2 - this.viewportHeight / 2 * projectedPoint.y),
     )
   }
 
