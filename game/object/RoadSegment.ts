@@ -1,5 +1,5 @@
 import Point3D from '../../engine/Point3D.js'
-import {Color, Polygon} from '../../engine/Renderer.js'
+import {Color, Mesh, Polygon} from '../../engine/Renderer.js'
 import MeshObject from './MeshObject.js'
 
 interface RoadSegmentColorConfiguration {
@@ -8,8 +8,8 @@ interface RoadSegmentColorConfiguration {
   readonly rumble: Color
 }
 
-export default class RoadSegment extends GameObject {
-  readonly #polygons: readonly Polygon[]
+export default class RoadSegment extends MeshObject {
+  protected readonly mesh: Mesh
 
   constructor(
     position: Point3D,
