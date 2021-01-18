@@ -9,6 +9,10 @@ interface RoadSegmentColorConfiguration {
 }
 
 export default class RoadSegment extends MeshObject {
+  public readonly leadingLeftCorner: Readonly<Point3D>
+  public readonly leadingRightCorner: Readonly<Point3D>
+  public readonly trailingLeftCorner: Readonly<Point3D>
+  public readonly trailingRightCorner: Readonly<Point3D>
   protected readonly mesh: Mesh
 
   constructor(
@@ -106,5 +110,9 @@ export default class RoadSegment extends MeshObject {
     }
 
     this.mesh = polygons
+    this.leadingLeftCorner = leadingLeftCorner
+    this.leadingRightCorner = leadingRightCorner
+    this.trailingLeftCorner = trailingLeftCorner
+    this.trailingRightCorner = trailingRightCorner
   }
 }
