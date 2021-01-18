@@ -42,4 +42,9 @@ export default {
     tree2: {x: 1205, y: 5, width: 282, height: 295},
     truck: {x: 1365, y: 644, width: 100, height: 78},
   },
+  'images/v5/dirt.png': {dirt: {x: 0, y: 0, width: 64, height: 64}},
+  'images/v5/grass-edge.png': {grassEdge: {x: 0, y: 0, width: 64, height: 64}},
+  'images/v5/grass.png': {grass: {x: 0, y: 0, width: 64, height: 64}},
+  'images/v5/ocean-edge.png': {oceanEdge: {x: 0, y: 0, width: 64, height: 64}},
+  'images/v5/ocean.png': {ocean: {x: 0, y: 0, width: 64, height: 64}},
 } as SpritesConfiguration
