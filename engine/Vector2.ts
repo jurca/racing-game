@@ -1,4 +1,4 @@
-export default class Point2D {
+export default class Vector2 {
   constructor(
     public x: number = 0,
     public y: number = 0,

@@ -1,13 +1,13 @@
-import Point3D from '../../engine/Point3D.js'
 import Renderer, {Sprite} from '../../engine/Renderer.js'
+import Vector3 from '../../engine/Vector3.js'
 import GameObject from './GameObject.js'
 
 export default class SpriteObject extends GameObject {
   readonly #sprite: Sprite
-  readonly #spritePosition: Readonly<Point3D> = new Point3D(0, 0, 0)
+  readonly #spritePosition: Readonly<Vector3> = new Vector3(0, 0, 0)
 
   constructor(
-    position: Point3D,
+    position: Vector3,
     sprite: Sprite,
     public scaleX: number = 1,
     public scaleY: number = scaleX,

@@ -2,7 +2,7 @@ import Camera from './Camera.js'
 import Game from './Game.js'
 import GameObject from './GameObject.js'
 import Renderer, {Mesh, Polygon, Sprite} from './Renderer.js'
-import Point3D from './Point3D.js'
+import Vector3 from './Vector3.js'
 
 export default abstract class AbstractRenderer implements Renderer {
   protected constructor(
@@ -29,7 +29,7 @@ export default abstract class AbstractRenderer implements Renderer {
   }
 
   public abstract drawSprite(
-    position: Readonly<Point3D>,
+    position: Readonly<Vector3>,
     sprite: Sprite,
     scaleX?: number,
     scaleY?: number,
@@ -38,7 +38,7 @@ export default abstract class AbstractRenderer implements Renderer {
   ): void
 
   public abstract drawDistanceScaledSprite(
-    position: Readonly<Point3D>,
+    position: Readonly<Vector3>,
     sprite: Sprite,
     scaleX?: number,
     scaleY?: number,

@@ -2,13 +2,13 @@ import AbstractRenderer from './AbstractRenderer.js'
 import Camera from './Camera.js'
 import Game from './Game.js'
 import GameObject from './GameObject.js'
-import Point2D from './Point2D.js'
-import Point3D from './Point3D.js'
 import {Polygon, Sprite} from './Renderer.js'
+import Vector2 from './Vector2.js'
+import Vector3 from './Vector3.js'
 
 export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
-  #pointOfOrigin: Readonly<Point3D> = new Point3D(0, 0, 0)
+  #pointOfOrigin: Readonly<Vector3> = new Vector3(0, 0, 0)
   readonly #clearEachFrame: boolean
 
   constructor(
@@ -79,7 +79,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
   }
 
   public drawSprite(
-    position: Readonly<Point3D>,
+    position: Readonly<Vector3>,
     sprite: Sprite,
     scaleX: number = 1,
     scaleY: number = scaleX,
@@ -98,7 +98,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
   }
 
   public drawDistanceScaledSprite(
-    position: Readonly<Point3D>,
+    position: Readonly<Vector3>,
     sprite: Sprite,
     scaleX: number = 1,
     scaleY: number = scaleX,
@@ -109,14 +109,14 @@ export default class Canvas2DRenderer extends AbstractRenderer {
       return
     }
 
-    const spriteTopCenter = position.add(new Point3D(0, sprite.height))
+    const spriteTopCenter = position.add(new Vector3(0, sprite.height))
     const bottomCenterOnScreen = this.#projectPoint(position)
     const topCenterOnScreen = this.#projectPoint(spriteTopCenter)
     const scale = Math.abs(topCenterOnScreen.y - bottomCenterOnScreen.y) / sprite.height
     this.drawSprite(position, sprite, scale * scaleX, scale * scaleY, skewX, skewY)
   }
 
-  #drawPath = (points: readonly Readonly<Point2D>[]): void => { // TypeScript 4.0.5 does not support private methods yet
+  #drawPath = (points: readonly Readonly<Vector2>[]): void => { // TypeScript 4.0.5 does not support private methods yet
     this.renderingContext.beginPath()
     this.renderingContext.moveTo(points[0].x, points[0].y)
     for (const point of points.slice(1)) {
@@ -125,7 +125,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     this.renderingContext.closePath()
   }
 
-  #projectPoint = (point: Readonly<Point3D>): Point2D => { // TypeScript 4.0.5 does not support private methods yet
+  #projectPoint = (point: Readonly<Vector3>): Vector2 => { // TypeScript 4.0.5 does not support private methods yet
     return this.camera.project(this.#pointOfOrigin.add(point))
   }
 }

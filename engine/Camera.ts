@@ -1,5 +1,5 @@
-import Point2D from './Point2D.js'
-import Point3D from './Point3D.js'
+import Vector2 from './Vector2.js'
+import Vector3 from './Vector3.js'
 
 export default interface Camera {
   readonly viewportWidth: number
@@ -9,13 +9,13 @@ export default interface Camera {
   readonly horizontalFieldOfView: number
   readonly minVisibleDepth: number
   readonly maxVisibleDepth: number
-  readonly position: Point3D
+  readonly position: Vector3
 
-  isInVisibleDepth(point: Readonly<Point3D>): boolean
+  isInVisibleDepth(point: Readonly<Vector3>): boolean
 
-  project(point: Readonly<Point3D>): Point2D
+  project(point: Readonly<Vector3>): Vector2
 
-  translatePosition(absolutePosition: Readonly<Point3D>): Point3D
+  translatePosition(absolutePosition: Readonly<Vector3>): Vector3
 
-  castRay(screenPoint: Readonly<Point2D>, targetDepth: number): Point3D
+  castRay(screenPoint: Readonly<Vector2>, targetDepth: number): Vector3
 }

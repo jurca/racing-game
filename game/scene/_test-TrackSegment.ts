@@ -1,6 +1,6 @@
 import Game from '../../engine/Game.js'
-import Point3D from '../../engine/Point3D.js'
 import {Color, Sprite} from '../../engine/Renderer.js'
+import Vector3 from '../../engine/Vector3.js'
 import Pseudo3DCamera from '../Pseudo3DCamera.js'
 import TrackSegment from '../object/TrackSegment.js'
 import RoadSegment from '../object/RoadSegment.js'
@@ -90,8 +90,6 @@ class TrackSegmentTestScene extends Scene {
   }
 }
 
-// TODO: test sprites as textures of left/right side
-
 interface SceneData {
   readonly billboards: readonly Sprite[]
   readonly roadGap?: Sprite
@@ -106,11 +104,11 @@ export default function makeScene(data: SceneData): Scene {
   for (let segmentIndex = 256; segmentIndex >= 0; segmentIndex--) {
     const roadSegmentConfiguration = ROAD_CONFIGURATIONS[segmentIndex % ROAD_CONFIGURATIONS.length]
     scene.addSubObject(new TrackSegment(
-      new Point3D(0, 0, segmentIndex * ROAD_SEGMENT_LENGTH),
+      new Vector3(0, 0, segmentIndex * ROAD_SEGMENT_LENGTH),
       data.leftSide || roadSegmentConfiguration.left,
       [
         new RoadSegment(
-          new Point3D(-ROAD_WIDTH * 1.5, 0, 0),
+          new Vector3(-ROAD_WIDTH * 1.5, 0, 0),
           ROAD_WIDTH,
           ROAD_WIDTH,
           ROAD_SEGMENT_LENGTH,
@@ -123,7 +121,7 @@ export default function makeScene(data: SceneData): Scene {
         ),
         data.roadGap || roadSegmentConfiguration.roadGap,
         new RoadSegment(
-          new Point3D(0, 120, 0),
+          new Vector3(0, 120, 0),
           ROAD_WIDTH,
           ROAD_WIDTH,
           ROAD_SEGMENT_LENGTH,
@@ -136,7 +134,7 @@ export default function makeScene(data: SceneData): Scene {
         ),
         data.roadGap || roadSegmentConfiguration.roadGap,
         new RoadSegment(
-          new Point3D(ROAD_WIDTH * 1.5, 0, 0),
+          new Vector3(ROAD_WIDTH * 1.5, 0, 0),
           ROAD_WIDTH,
           ROAD_WIDTH,
           ROAD_SEGMENT_LENGTH,
@@ -152,7 +150,7 @@ export default function makeScene(data: SceneData): Scene {
       data.billboards.length && Math.random() < 0.1
         ? [
             new SpriteObject(
-              new Point3D(-ROAD_WIDTH * 2 - 680, 0, 0),
+              new Vector3(-ROAD_WIDTH * 2 - 680, 0, 0),
               data.billboards[Math.floor(Math.random() * data.billboards.length)],
               3,
             ),
@@ -168,7 +166,7 @@ export default function makeScene(data: SceneData): Scene {
 }
 
 export const defaultCamera = new Pseudo3DCamera(
-  new Point3D(0, BASE_CAMERA_HEIGHT, 0),
+  new Vector3(0, BASE_CAMERA_HEIGHT, 0),
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
   60,

@@ -1,5 +1,5 @@
-import Point3D from '../../engine/Point3D.js'
 import Renderer, {Color, Sprite} from '../../engine/Renderer.js'
+import Vector3 from '../../engine/Vector3.js'
 import GameObject from '../object/GameObject.js'
 import RoadSegment from '../object/RoadSegment.js'
 import SpriteObject from '../object/SpriteObject.js'
@@ -30,7 +30,7 @@ const roadScene = new Scene()
 
 for (let i = 0; i < 1000; i++) {
   roadScene.addSubObject(new RoadSegment(
-    new Point3D(-500, 0, i * 200),
+    new Vector3(-500, 0, i * 200),
     1000 + WIDTH_OFFSETS[i % WIDTH_OFFSETS.length],
     1000 + WIDTH_OFFSETS[(i + 1) % WIDTH_OFFSETS.length],
     200,
@@ -46,7 +46,7 @@ for (let i = 0; i < 1000; i++) {
     },
   ))
   roadScene.addSubObject(new RoadSegment(
-    new Point3D(-500 + i * i, i * 10, i * 120),
+    new Vector3(-500 + i * i, i * 10, i * 120),
     700,
     700,
     120,
@@ -68,13 +68,13 @@ export default function makeScene(sprites: SceneSprites): Scene {
 
   scene.addSubObject(roadScene)
 
-  scene.addSubObject(new SpriteObject(new Point3D(-750, 240, 870), sprites.lowerLeftBillboard))
+  scene.addSubObject(new SpriteObject(new Vector3(-750, 240, 870), sprites.lowerLeftBillboard))
 
-  scene.addSubObject(Object.assign(new GameObject(new Point3D(0, 1_200, 1_000)), {
+  scene.addSubObject(Object.assign(new GameObject(new Vector3(0, 1_200, 1_000)), {
     tickCounter: 0,
     render(renderer: Renderer): void {
       renderer.drawSprite(
-        new Point3D(0, 0, 0),
+        new Vector3(0, 0, 0),
         sprites.spriteScaleSkewTest,
         0.5 + (this.tickCounter % 32) / 32,
         0.5 + (this.tickCounter % 48) / 48,
@@ -87,27 +87,27 @@ export default function makeScene(sprites: SceneSprites): Scene {
     },
   }))
 
-  scene.addSubObject(Object.assign(new GameObject(new Point3D(200, 0, 900)), {
+  scene.addSubObject(Object.assign(new GameObject(new Vector3(200, 0, 900)), {
     tickCounter: 0,
     render(renderer: Renderer): void {
-      const point1 = new Point3D(0, 0, 0)
-      const point2 = new Point3D(512, 512, 0)
+      const point1 = new Vector3(0, 0, 0)
+      const point2 = new Vector3(512, 512, 0)
       renderer.drawPolygon({
         surface: new Color(128, 0, 0),
         vertices: [
           point1,
-          new Point3D(point2.x + 24 * 16, point1.y, 0),
-          new Point3D(point2.x + 24 * 16, point2.y + 32 * 16, 0),
-          new Point3D(point1.x, point2.y + 32 * 16, 0),
+          new Vector3(point2.x + 24 * 16, point1.y, 0),
+          new Vector3(point2.x + 24 * 16, point2.y + 32 * 16, 0),
+          new Vector3(point1.x, point2.y + 32 * 16, 0),
         ],
       })
       renderer.drawPolygon({
         surface: sprites.polygonTexture,
         vertices: [
-          new Point3D(point1.x, point1.y, 0),
-          new Point3D(point2.x, point1.y + this.tickCounter % 32 * 16, 0),
-          new Point3D(point2.x + this.tickCounter % 24 * 16, point2.y + this.tickCounter % 32 * 16, 0),
-          new Point3D(point1.x + this.tickCounter % 24 * 16, point2.y, 0),
+          new Vector3(point1.x, point1.y, 0),
+          new Vector3(point2.x, point1.y + this.tickCounter % 32 * 16, 0),
+          new Vector3(point2.x + this.tickCounter % 24 * 16, point2.y + this.tickCounter % 32 * 16, 0),
+          new Vector3(point1.x + this.tickCounter % 24 * 16, point2.y, 0),
         ],
       })
     },
@@ -120,7 +120,7 @@ export default function makeScene(sprites: SceneSprites): Scene {
 }
 
 export const defaultCamera = new Pseudo3DCamera(
-  new Point3D(0, CAMERA_VERTICAL_OFFSET, 0),
+  new Vector3(0, CAMERA_VERTICAL_OFFSET, 0),
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
   CAMERA_VERTICAL_FIELD_OF_VIEW,

@@ -1,12 +1,12 @@
 import Game from './Game.js'
-import Point3D from './Point3D.js'
 import Renderer from './Renderer.js'
+import Vector3 from './Vector3.js'
 
 export default interface GameObject {
   readonly parent: null | GameObject
   readonly subObjects: readonly GameObject[]
-  readonly position: Point3D
-  readonly absolutePosition: Readonly<Point3D>
+  readonly position: Vector3
+  readonly absolutePosition: Readonly<Vector3>
 
   onRun(): void
 

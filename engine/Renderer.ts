@@ -1,7 +1,7 @@
 import Camera from './Camera.js'
 import Game from './Game.js'
 import GameObject from './GameObject.js'
-import Point3D from './Point3D.js'
+import Vector3 from './Vector3.js'
 
 export class Color {
   constructor(
@@ -45,7 +45,7 @@ export type Surface = Color | Sprite
 
 export interface Polygon {
   readonly surface: Surface
-  readonly vertices: readonly [Readonly<Point3D>, Readonly<Point3D>, Readonly<Point3D>, ...readonly Readonly<Point3D>[]]
+  readonly vertices: readonly [Readonly<Vector3>, Readonly<Vector3>, Readonly<Vector3>, ...readonly Readonly<Vector3>[]]
 }
 
 export type Mesh = readonly Polygon[]
@@ -62,7 +62,7 @@ export default interface Renderer {
   drawMesh(mesh: Mesh): void
 
   drawSprite(
-    position: Readonly<Point3D>,
+    position: Readonly<Vector3>,
     sprite: Sprite,
     scaleX?: number,
     scaleY?: number,
@@ -71,7 +71,7 @@ export default interface Renderer {
   ): void
 
   drawDistanceScaledSprite(
-    position: Readonly<Point3D>,
+    position: Readonly<Vector3>,
     sprite: Sprite,
     scaleX?: number,
     scaleY?: number,

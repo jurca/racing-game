@@ -1,15 +1,15 @@
 import Game from './Game.js'
 import GameObject from './GameObject.js'
 import GameObjectCollection from './GameObjectCollection.js'
-import Point3D from './Point3D.js'
 import Renderer from './Renderer.js'
+import Vector3 from './Vector3.js'
 
 export default abstract class AbstractGameObject implements GameObject {
   #parent: null | GameObject = null
   readonly #subGameObjects = new GameObjectCollection()
 
   constructor(
-    public position: Point3D,
+    public readonly position: Vector3,
   ) {
   }
 
@@ -21,7 +21,7 @@ export default abstract class AbstractGameObject implements GameObject {
     return this.#subGameObjects.gameObjects
   }
 
-  public get absolutePosition(): Readonly<Point3D> {
+  public get absolutePosition(): Readonly<Vector3> {
     if (!this.parent) {
       return this.position
     }
@@ -70,7 +70,7 @@ export default abstract class AbstractGameObject implements GameObject {
     }
   }
 
-  public getAbsolutePosition(point: Point3D): Point3D {
+  public getAbsolutePosition(point: Readonly<Vector3>): Vector3 {
     return this.absolutePosition.add(point)
   }
 }

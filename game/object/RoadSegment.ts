@@ -1,5 +1,5 @@
-import Point3D from '../../engine/Point3D.js'
 import {Color, Mesh, Polygon} from '../../engine/Renderer.js'
+import Vector3 from '../../engine/Vector3.js'
 import MeshObject from './MeshObject.js'
 
 interface RoadSegmentColorConfiguration {
@@ -9,14 +9,14 @@ interface RoadSegmentColorConfiguration {
 }
 
 export default class RoadSegment extends MeshObject {
-  public readonly leadingLeftCorner: Readonly<Point3D>
-  public readonly leadingRightCorner: Readonly<Point3D>
-  public readonly trailingLeftCorner: Readonly<Point3D>
-  public readonly trailingRightCorner: Readonly<Point3D>
+  public readonly leadingLeftCorner: Readonly<Vector3>
+  public readonly leadingRightCorner: Readonly<Vector3>
+  public readonly trailingLeftCorner: Readonly<Vector3>
+  public readonly trailingRightCorner: Readonly<Vector3>
   protected readonly mesh: Mesh
 
   constructor(
-    position: Point3D,
+    position: Vector3,
     public readonly leadingWidth: number,
     public readonly trailingWidth: number,
     public readonly length: number,
@@ -50,15 +50,15 @@ export default class RoadSegment extends MeshObject {
 
     const polygons: Polygon[] = []
 
-    const leadingLeftCorner = new Point3D(-leadingWidth / 2, 0, 0)
-    const leadingRightCorner = new Point3D(leadingWidth / 2, 0, 0)
-    const trailingLeftCorner = new Point3D(-trailingWidth / 2 + curvature, altitudeDelta, length)
-    const trailingRightCorner = new Point3D(trailingWidth / 2 + curvature, altitudeDelta, length)
+    const leadingLeftCorner = new Vector3(-leadingWidth / 2, 0, 0)
+    const leadingRightCorner = new Vector3(leadingWidth / 2, 0, 0)
+    const trailingLeftCorner = new Vector3(-trailingWidth / 2 + curvature, altitudeDelta, length)
+    const trailingRightCorner = new Vector3(trailingWidth / 2 + curvature, altitudeDelta, length)
 
-    const leadingLeftRumbleInnerCorner = leadingLeftCorner.add(new Point3D(rumbleWidth))
-    const leadingRightRumbleInnerCorner = leadingRightCorner.add(new Point3D(-rumbleWidth))
-    const trailingLeftRumbleInnerCorner = trailingLeftCorner.add(new Point3D(rumbleWidth))
-    const trailingRightRumbleInnerCorner = trailingRightCorner.add(new Point3D(-rumbleWidth))
+    const leadingLeftRumbleInnerCorner = leadingLeftCorner.add(new Vector3(rumbleWidth))
+    const leadingRightRumbleInnerCorner = leadingRightCorner.add(new Vector3(-rumbleWidth))
+    const trailingLeftRumbleInnerCorner = trailingLeftCorner.add(new Vector3(rumbleWidth))
+    const trailingRightRumbleInnerCorner = trailingRightCorner.add(new Vector3(-rumbleWidth))
     if (rumbleWidth) {
       polygons.push(
         {
@@ -95,9 +95,9 @@ export default class RoadSegment extends MeshObject {
     const leadingMarkerSpacing = (leadingRightRumbleInnerCorner.x - leadingLeftRumbleInnerCorner.x) / laneCount
     const trailingMarkerSpacing = (trailingRightRumbleInnerCorner.x - trailingLeftRumbleInnerCorner.x) / laneCount
     for (let markerIndex = 1; markerIndex < laneCount; markerIndex++) {
-      const leadingCenter = leadingLeftRumbleInnerCorner.add(new Point3D(markerIndex * leadingMarkerSpacing))
-      const trailingCenter = trailingLeftRumbleInnerCorner.add(new Point3D(markerIndex * trailingMarkerSpacing))
-      const centerOffset = new Point3D(laneMarkerWidth / 2)
+      const leadingCenter = leadingLeftRumbleInnerCorner.add(new Vector3(markerIndex * leadingMarkerSpacing))
+      const trailingCenter = trailingLeftRumbleInnerCorner.add(new Vector3(markerIndex * trailingMarkerSpacing))
+      const centerOffset = new Vector3(laneMarkerWidth / 2)
       polygons.push({
         surface: colorConfiguration.laneMarker,
         vertices: [

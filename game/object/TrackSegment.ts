@@ -1,26 +1,26 @@
 import Game from '../../engine/Game.js'
 import {Color, Mesh, Polygon, Sprite} from '../../engine/Renderer.js'
-import Point3D from '../../engine/Point3D.js'
 import {clamp, lastItem} from '../../engine/util.js'
+import Vector2 from '../../engine/Vector2.js'
+import Vector3 from '../../engine/Vector3.js'
 import MeshObject from './MeshObject.js'
 import RoadSegment from './RoadSegment.js'
 import SpriteObject from './SpriteObject.js'
-import Point2D from '../../engine/Point2D.js'
 
 export default class TrackSegment extends MeshObject {
   readonly #staticMesh: Mesh
   #dynamicMesh: Mesh = [] // additional left- and right-side polygons to fill the screen side-to-side
-  readonly #leftLeadingStaticMeshCorner: Readonly<Point3D>
-  readonly #rightLeadingStaticMeshCorner: Readonly<Point3D>
-  readonly #leftTrailingStaticMeshCorner: Readonly<Point3D>
-  readonly #rightTrailingStaticMeshCorner: Readonly<Point3D>
+  readonly #leftLeadingStaticMeshCorner: Readonly<Vector3>
+  readonly #rightLeadingStaticMeshCorner: Readonly<Vector3>
+  readonly #leftTrailingStaticMeshCorner: Readonly<Vector3>
+  readonly #rightTrailingStaticMeshCorner: Readonly<Vector3>
   readonly #leftSideSurface: Color | Sprite
   readonly #rightSideSurface: Color | Sprite
   readonly #maxLeftSideRepeatedPolygons: number
   readonly #maxRightSideRepeatedPolygons: number
 
   constructor(
-    position: Point3D,
+    position: Vector3,
     leftSide: Color | readonly [Sprite, ...Sprite[]],
     roadArea: ReadonlyArray<RoadSegment | Color | Sprite>,
     rightSide: Color | readonly [Sprite, ...Sprite[]],
@@ -73,14 +73,14 @@ export default class TrackSegment extends MeshObject {
         let {value: sprite, done} = sprites.next(),
           rightLeadingCorner = mostLeftLeadingRoadCorner,
           rightTrailingCorner = mostLeftTrailingRoadCorner,
-          leftLeadingCorner = rightLeadingCorner.subtract(new Point3D(sprite?.width ?? 0, 0, 0)),
-          leftTrailingCorner = rightTrailingCorner.subtract(new Point3D(sprite?.width ?? 0, 0, 0));
+          leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0)),
+          leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0));
         !done;
         {value: sprite, done} = sprites.next(),
         rightLeadingCorner = leftLeadingCorner,
         rightTrailingCorner = leftTrailingCorner,
-        leftLeadingCorner = rightLeadingCorner.subtract(new Point3D(sprite?.width ?? 0, 0, 0)),
-        leftTrailingCorner = rightTrailingCorner.subtract(new Point3D(sprite?.width ?? 0, 0, 0))
+        leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0)),
+        leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0))
       ) {
         polygons.push({
           surface: sprite,
@@ -98,14 +98,14 @@ export default class TrackSegment extends MeshObject {
         let {value: sprite, done} = sprites.next(),
           leftLeadingCorner = mostRightLeadingRoadCorner,
           leftTrailingCorner = mostRightTrailingRoadCorner,
-          rightLeadingCorner = leftLeadingCorner.add(new Point3D(sprite?.width ?? 0, 0, 0)),
-          rightTrailingCorner = leftTrailingCorner.add(new Point3D(sprite?.width ?? 0, 0, 0));
+          rightLeadingCorner = leftLeadingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0)),
+          rightTrailingCorner = leftTrailingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0));
         !done;
         {value: sprite, done} = sprites.next(),
         leftLeadingCorner = rightLeadingCorner,
         leftTrailingCorner = rightTrailingCorner,
-        rightLeadingCorner = leftLeadingCorner.add(new Point3D(sprite?.width ?? 0, 0, 0)),
-        rightTrailingCorner = leftTrailingCorner.add(new Point3D(sprite?.width ?? 0, 0, 0))
+        rightLeadingCorner = leftLeadingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0)),
+        rightTrailingCorner = leftTrailingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0))
       ) {
         polygons.push({
           surface: sprite,
@@ -209,12 +209,12 @@ export default class TrackSegment extends MeshObject {
     const leftTrailingFixedMeshOnScreenCorner = camera.project(leftTrailingFixedMeshCorner)
     if (leftLeadingFixedMeshOnScreenCorner.x > 0 || leftTrailingFixedMeshOnScreenCorner.x > 0) {
       const absoluteLeftLeadingScreenCorner = camera.castRay(
-        new Point2D(0, leftLeadingFixedMeshOnScreenCorner.y),
+        new Vector2(0, leftLeadingFixedMeshOnScreenCorner.y),
         leftLeadingFixedMeshCorner.z,
       )
       absoluteLeftLeadingScreenCorner.x = Math.min(absoluteLeftLeadingScreenCorner.x, leftLeadingFixedMeshCorner.x)
       const absoluteLeftTrailingScreenCorner = camera.castRay(
-        new Point2D(0, leftTrailingFixedMeshOnScreenCorner.y),
+        new Vector2(0, leftTrailingFixedMeshOnScreenCorner.y),
         leftTrailingFixedMeshCorner.z,
       )
       absoluteLeftTrailingScreenCorner.x = Math.min(absoluteLeftTrailingScreenCorner.x, leftTrailingFixedMeshCorner.x)
@@ -234,13 +234,13 @@ export default class TrackSegment extends MeshObject {
           let polygonIndex = 0,
             rightLeadingCorner = this.#leftLeadingStaticMeshCorner,
             rightTrailingCorner = this.#leftTrailingStaticMeshCorner,
-            leftLeadingCorner = rightLeadingCorner.subtract(new Point3D(polygonWidth, 0, 0)),
-            leftTrailingCorner = rightTrailingCorner.subtract(new Point3D(polygonWidth, 0, 0));
+            leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(polygonWidth, 0, 0)),
+            leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(polygonWidth, 0, 0));
           polygonIndex <= polygonCount;
           rightLeadingCorner = leftLeadingCorner,
           rightTrailingCorner = leftTrailingCorner,
-          leftLeadingCorner = rightLeadingCorner.subtract(new Point3D(polygonWidth, 0, 0)),
-          leftTrailingCorner = rightTrailingCorner.subtract(new Point3D(polygonWidth, 0, 0)),
+          leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(polygonWidth, 0, 0)),
+          leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(polygonWidth, 0, 0)),
           polygonIndex++
         ) {
           polygons.push({
@@ -270,12 +270,12 @@ export default class TrackSegment extends MeshObject {
       rightTrailingFixedMeshOnScreenCorner.x < camera.viewportWidth
     ) {
       const absoluteRightLeadingScreenCorder = camera.castRay(
-        new Point2D(camera.viewportWidth, rightLeadingFixedMeshOnScreenCorner.y),
+        new Vector2(camera.viewportWidth, rightLeadingFixedMeshOnScreenCorner.y),
         rightLeadingFixedMeshCorner.z,
       )
       absoluteRightLeadingScreenCorder.x = Math.max(absoluteRightLeadingScreenCorder.x, rightLeadingFixedMeshCorner.x)
       const absoluteRightTrailingScreenCorner = camera.castRay(
-        new Point2D(camera.viewportWidth, rightTrailingFixedMeshOnScreenCorner.y),
+        new Vector2(camera.viewportWidth, rightTrailingFixedMeshOnScreenCorner.y),
         rightTrailingFixedMeshCorner.z,
       )
       absoluteRightTrailingScreenCorner.x = Math.max(
@@ -298,13 +298,13 @@ export default class TrackSegment extends MeshObject {
           let polygonIndex = 0,
             leftLeadingCorner = this.#rightLeadingStaticMeshCorner,
             leftTrailingCorner = this.#rightTrailingStaticMeshCorner,
-            rightLeadingCorner = leftLeadingCorner.add(new Point3D(polygonWidth, 0, 0)),
-            rightTrailingCorner = leftTrailingCorner.add(new Point3D(polygonWidth, 0, 0));
+            rightLeadingCorner = leftLeadingCorner.add(new Vector3(polygonWidth, 0, 0)),
+            rightTrailingCorner = leftTrailingCorner.add(new Vector3(polygonWidth, 0, 0));
           polygonIndex <= polygonCount;
           leftLeadingCorner = rightLeadingCorner,
           leftTrailingCorner = rightTrailingCorner,
-          rightLeadingCorner = leftLeadingCorner.add(new Point3D(polygonWidth, 0, 0)),
-          rightTrailingCorner = leftTrailingCorner.add(new Point3D(polygonWidth, 0, 0)),
+          rightLeadingCorner = leftLeadingCorner.add(new Vector3(polygonWidth, 0, 0)),
+          rightTrailingCorner = leftTrailingCorner.add(new Vector3(polygonWidth, 0, 0)),
           polygonIndex++
         ) {
           polygons.push({
