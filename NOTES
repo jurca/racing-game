@@ -1,0 +1,171 @@
+- GameObject by nemal mať na starosti aktualizovanie/vykresľovanie sub-objektov, toto by mal robiť updater/renderer
+- TrackSegment by mal implementovať LoD pre zlepšenie výkonu - od istej vzdialenosti by nemal používať textúry pre
+  priestory mimo cestu ale len jeden jednofarebný polygón pre každú oblasť mimo cesty
+  - implementovať aj textúrovaný medzistupeň, ktorý použije iba jednu textúru v jednom polygóne pre každú oblasť mimo
+    cesty (t.j. vľavo, vpravo, a každá oblasť medzi cestami)?
+  - LoD pre TrackSegment implementovať ako samostatný game object, ktorý obsahuje rôzne TrackSegment inštancie pre rôzne
+    úrovne detailov (pre každú snímku nastaví ako svoj pod-objekt ten jeden správny). Takto nebude nutné meniť
+    implementáciu triedy TrackSegment
+- Kamera (Pseudo3DCamera) môže simulovať naklonenie nadol posunutím premietaných bodov po Y osi nahor s narastajúcim Z.
+  ~~Lineárna závislosť by mala produkovať prijateľný efekt.~~
+  Pre správne správanie od blízka do nekonečna by sa malo pracovať s tangentom^-1 vzdielnosti, hodnotu previesť potom
+  z rozsahu [0, Pi/2] na [0, -cameraTiltDeltaAtInfinity px]. Hodnotu "cameraTiltDeltaAtInfinity px" spočítať
+  z vertikálneho FoV, výšky viewportu, a cameraTilt v °.
+  - OutRun nemal nijak emulovaný náklon kamery dole, na druhú stranu, moderné závodné hry majú kameru naklonenú (veľmi)
+    mierne nadol (horizont je vyššie než polovica obrazovky), napr. NFS Heat: https://youtu.be/uO-ElLNxcDY?t=1383
+    (horizont je 32 px nad stredom pri rozlíšení 720p).
+    Pri vertikálnom FoV 60° odpovedá 32 px v prepočte 2.6°.
+- deň/noc jednak zmenou obrázku v sky boxe (smooth transition) a pomocou zmeny farieb polygónov a spritov (smooth
+  transition)
+- vykresľovanie hmly - po vykreslení obsahu track segmentu prekryť oblasť obrazovky od spodného okraju track segmentu až
+  po horný okraj obrazovky priehľadnou vrstvou reprezentujúcou hmlu. Pre každý krok sa použije rovnaká priehľadnosť
+  vrstvy hmly (efekt sa prirodzene akumuluje) a tento postup správne aplikuje hmlu aj na iné objekty okolo trate
+  - Pozn.: track segment by mal mať vždy eleváciu 0, hoci jednotlivé road segmenty môžu mať rôzne elevácie (nikdy nesmú
+    ísť pod 0). síce tak vykreslím hmlu aj "pod" cestou ak je s eleváciou, ale to nevadí pretože bude prekrytá
+    následujúcim bližším track segmentom
+- NICETOHAVE: road segment môže byť naklonený (otočiť sprite auta na ceste okolo jednej osi je triviálne)
+- možno by sa dala fyzika auta skopírovať z Unity 3D demo projektu
+- podpora pre gamepad? http://mdn.io/Gamepad_API
+- podpora pre nakláňanie telefónu? http://mdn.io/Gyroscope a http://mdn.io/RelativeOrientationSensor
+- vytvoriť CameraMount extends GameObject, s fluidným následovím game objektu hráča kamerou
+- CollisionSystem - asi by bol overkill to robiť obecne, prípadne by sa nechalo vždy na game objektoch aby
+  optimalizovali výpočet kolízií (Track by vybral vhodné Track Segmenty, Track Segment by vybral príslušný collididable
+  sprite. Tiež nejak by sa dalo optimalizovať ako sa spočíta kolízia s inými autami ak sa pracovalo s "aktuálnym" track
+  segmentom)
+- dynamické škálovanie rozlíšenia podľa aktuálneho FPS - implementovať v Rendereri, v Camera potom stačí meniť
+  viewportWidth a viewportHeight
+- Pozn.: Vyzerá to, že pôvodný OutRun mal rendering distance nastavený na cca 16 track segmentov - viď
+  https://i.ytimg.com/vi/ELUl-cAtUIE/hq720.jpg
+
+## Nice to haves (do not implement)
+
+### True 3D heightmap-based world with 3-axis movement and rotation freedom
+
+Heighmap is a 2D matrix, every point's value represents its elevation. 4 adjacent points represent vertices for 2
+triangles. Lets have another 2D matrix that specifies the orientation of the 2 triangles (either split the rectangle
+area / way or \ way). This triangle orientation matrix has the dimensions of the elevation matrix minus one row and
+column.
+
+Use x and y axes to navigate the matrix, and z axis for elevation. Lets use painter's algorithm for simplicity. To do
+roll (rotation around y axis), calculate the normalized on-screen vector perpendicular to the horizon. To do pitch
+(rotation around x axis), calculate where along the roll-determined vector the horizon will be on screen with the
+vector passing through the center of the screen. To do yaw (rotation around z axis), calculate the normalized vector
+pointing "forward" within the heightmap.
+
+To render:
+1. Use the vectors and positions to determine the square at the center of the render-horizon by adding the product of
+   render distance and z-orienation vector to the camera's position.
+2. Use a vector perpendicular to z-orientation vector to navigate the adjacent squares and render the horizon, stopping
+   as soon as a square to render would be off-screen completely. Keep track of the number of squares rendered towards
+   left and towards right.
+3. Step towards the camera using the negated z-orientation vector.
+4. Repeat from step 2. using the previous known on-screen squares count (update the count afterwards, it can increase
+   as well!) until reaching the camera, or all of the squares within the tested range are off-screen.
+
+This effectively does the rotations from scene to frustrum for us by navigating the heightmap using pre-rotated
+vectors.
+
+To render a square, use the fact that all sides of every square is the same distance, and use the pre-computed vectors
+to efectively do the rotations from scene to frustrum:
+1. To get vertices of a square, use the floating-point position within the square pointing to the square to render, get
+   the within-square [0, 1] x,y coordinates.
+2. Use the square side length, within-square coordinates and z-orientation vector to calculate x,y coordinates within
+   frustrum z is vertex's z - camera's z.
+   xf = l * (xr * v.x - yr * v.y) + frustrum_square.x
+   yf = l * (xr * v.y + yr * v.x) + frustrum_square.y
+   Note: checThese are the rotation equations. Note that v.x si cosinus, v.y is sinus. See
+   http://fastgraph.com/makegames/3drotation/
+3. Use the in-frustrum coordinates to calculate on-screen projection, round the results to whole numbers to prevent
+   stitching issues.
+4. Render the triangles using the on-screen coordinates, unless the edge closest to the camera's position is farther
+   (regarding the horizon->close ground orientation) than the farthest edge - back-face culling.
+
+### UV texture mapping approximation
+
+Use clipping paths and strething the image as needed. Note that this does not take care of rotation, so the use of this
+is limited to surface that do not rotate on the screen around the axis pointing towards the camera.
+
+### Render distance & frustrum culling
+
+Add `Camera.renderDistance: number` - specifies a sphere surrounding the camera, everything outside it will not be
+rendered.
+
+Add `GameObject.sizeRadius: number` - radius of the smallest sphere centered on object's position containing the
+object's mesh and the meshes of all its sub-objects (can be implemented in `AbstractGameObject` as a getter).
+
+Add `GameObject.meshSizeRadius: number` - radius of the smallest sphere centered on object's position containing the
+object's mesh, without its sub-objects. Declared in `GameObject`, implemented in `AbstractGameObject` as `0` (every game
+object must implement it on its own if it wants to utilize it).
+
+Add `GameObject.getMeshSizeRadius(mesh: Mesh): number` - returns the radius of the smallest sphere centered on [0, 0, 0]
+containing the provided mesh.
+
+Changes to renderer(s):
+- first filter the game objects to render to create a linear list of objects to render from the forest of objects in the
+  scene
+  - for each object: calculate the object's distance from the camera. Add the object to the render list only if the
+    distance is lower or equal to `camera.renderDistance + gameObject.sizeRadius`
+- render the objects in the created linear list
+
+### Depth-based object culling
+
+This is insipired by z-buffer, but works on game object level.
+
+After doing other culls of game objects to render by the renderer, apply the following filtering:
+- objectsToFilter = [...(so-far filtered game objets)]
+- objectsToRender = []
+- for object of objectsToFilter
+  - onScreenPosition = camera.project(object.absolutePosition)
+  - boudingCircleVector = camera.getVectorTo(object).getRightAngleVector().normalize().multiply(object.sizeRadius)
+  - boundingCirclePoint = camera.project(object.absolutePosition.add(boudingCircleVector))
+  - onScreenRadius = distance(onScreenPosition, boundingCirclePoint)
+  - cameraDistance = distance(camera.position, object.position)
+  - shouldEnqueue = true
+  - for enqueuedObjectDetails of objectsToRender
+    - if (
+        cameraDistance > enqueuedObjectDetails.cameraDistance &&
+        distance(object.absolutePosition, enqueuedObjectDetails.gameObject.absolutePosition) <= enqueuedObjectDetails.onScreenRadius - onScreenRadius
+      )
+      - shouldEnqueue = false
+      - break
+    - if (
+        cameraDistance < enqueuedObjectDetails.cameraDistance &&
+        distance(object.absolutePosition, enqueuedObjectDetails.gameObject.absolutePosition) <= onScreenRadius - enqueuedObjectDetails.onScreenRadius
+      )
+      objectsToRender.delete(enqueuedObjectDetails)
+  - if shouldEnqueue
+    - objectsToRender.push({gameObject: object, onScreenRadius, cameraDistance})
+
+Render only the game object that are in `objectsToRender` array.
+
+### Culling of objects not faced by camera
+
+Check the angle between camera's direction and the point on circle representing game object's sizeRadius sphere from
+camera's perspective that's closes to the vector representing camera's direction. If the angle is greater than angle to
+the corner of the viewport, cull the object from the render list.
+
+### UV mapovanie textúr na trojuholník
+
+Trhovník má vrcholy A, B a C
+Vrcholy sú mapované na textúru na UV súradnice U, V a W odpovedajúce vrcholom A, B a C
+Mapovanie prebieha až po premietnutí do 2D súradníc na obrazovke, pixel po pixeli.
+Mapovanie bodu X v trojuholníku na texel:
+V1 = Vector(A, B)
+V2 = Vector(A, C)
+Vx = Vector(A, X)
+AngleV1V2 = V1.angleTo(V2)
+AngleV1Vx = V1.angleTo(Vx)
+AngleRatio = AngleV1Vx / AngleV1V2
+EdgeProjection = Vector.lerp(B, C, AngleRatio)
+DistanceRatio = Vx.magnitude / Vector(A, EdgeProjection).magnitude
+TEdgeProjection = Vector.lerp(V, W, AngleRatio)
+TexelVector = Vector(U, TEdgeProjection) * DistanceRatio
+TexelCoordinates = U + TexelVector
+
+Alternatívny (presnejší?) postup:
+použiť 2D barycentric coordinate system - viď
+https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates
+
+Veľkosť / normalizácia vektoru vyžaduje odmocninu. To by sa dalo možno optimalizovať pomocou tohto algoritmu (záleží či
+JS engine používa SSE inštrukcie): https://en.m.wikipedia.org/wiki/Fast_inverse_square_root
+V prípade normalizácie je možné použiť rovno násobenie výsledkom, keďže vypočíta *obrátenú* odmocninu.
