@@ -3,14 +3,16 @@ import Canvas2DRenderer from '../engine/Canvas2DRenderer.js'
 import Game from '../engine/Game.js'
 import loadSprites from '../engine/spriteLoader.js'
 import TickUpdater from '../engine/TickUpdater.js'
+import ProfilingRenderer from '../profiler/ProfilingRenderer.js'
 import makeScene, {defaultCamera} from './scene/_test-TrackSegment.js'
 
 addEventListener('load', async () => {
   const canvas = document.getElementById('game') as HTMLCanvasElement
   const sprites = await loadSprites(SPRITES_CONFIGURATION)
   console.log(sprites)
+  const renderer = new ProfilingRenderer(new Canvas2DRenderer(canvas, defaultCamera, false))
   const game = new Game(
-    new Canvas2DRenderer(canvas, defaultCamera, false),
+    renderer,
     new TickUpdater(1_000 / 60),
   )
 
@@ -33,5 +35,8 @@ addEventListener('load', async () => {
 
   game.run()
   console.log(game)
-  setTimeout(() => game.stop(), 15_000)
+  setTimeout(() => {
+    game.stop()
+    console.log(renderer.renderDurationStats)
+  }, 15_000)
 })
