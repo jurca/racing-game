@@ -9,6 +9,35 @@ import SpriteObject from './SpriteObject.js'
 
 const EMPTY_MESH: Mesh = []
 
+const MAX_SPRITE_TILING_MULTIPLIER = 32
+
+class SideSurfaceTiles {
+  readonly x1: Sprite
+  readonly x2!: Sprite
+  readonly x4!: Sprite
+  readonly x8!: Sprite
+  readonly x16!: Sprite
+  readonly x32!: Sprite
+
+  constructor(tile: Sprite) {
+    this.x1 = tile
+    for (let scale = 2; scale <= MAX_SPRITE_TILING_MULTIPLIER; scale *= 2) {
+      const scalingCanvas = document.createElement('canvas')
+      scalingCanvas.width = tile.width * scale
+      scalingCanvas.height = tile.height
+      const canvasContext =
+        scalingCanvas.getContext('2d') ||
+        (() => { throw new Error('Cannot create 2D canvas context') })()
+      const halfScaleTile = this[`x${scale / 2}` as keyof SideSurfaceTiles]
+      canvasContext.drawImage(halfScaleTile.data, 0, 0)
+      canvasContext.drawImage(halfScaleTile.data, halfScaleTile.width, 0)
+      this[`x${scale}` as keyof SideSurfaceTiles] = new Sprite(scalingCanvas)
+    }
+  }
+}
+
+const sideSurfaceTileCache = new WeakMap<Sprite, SideSurfaceTiles>()
+
 export default class TrackSegment extends MeshObject {
   readonly #staticMesh: Mesh
   #dynamicMesh: Mesh = [] // additional left- and right-side polygons to fill the screen side-to-side
@@ -18,6 +47,8 @@ export default class TrackSegment extends MeshObject {
   readonly #rightTrailingStaticMeshCorner: Readonly<Vector3>
   readonly #leftSideSurface: Color | Sprite
   readonly #rightSideSurface: Color | Sprite
+  readonly #leftSideSurfaceTiles: null | SideSurfaceTiles = null
+  readonly #rightSideSurfaceTiles: null | SideSurfaceTiles = null
   readonly #maxLeftSideRepeatedPolygons: number
   readonly #maxRightSideRepeatedPolygons: number
   #isBackToCamera = false
@@ -184,6 +215,24 @@ export default class TrackSegment extends MeshObject {
 
     this.#leftSideSurface = Array.isArray(leftSide) ? leftSide[0] : leftSide
     this.#rightSideSurface = Array.isArray(rightSide) ? rightSide[rightSide.length - 1] : rightSide
+    if (this.#leftSideSurface instanceof Sprite) {
+      this.#leftSideSurfaceTiles =
+        sideSurfaceTileCache.get(this.#leftSideSurface) ||
+        (() => {
+          const tiles = new SideSurfaceTiles(this.#leftSideSurface)
+          sideSurfaceTileCache.set(this.#leftSideSurface, tiles)
+          return tiles
+        })()
+    }
+    if (this.#rightSideSurface instanceof Sprite) {
+      this.#rightSideSurfaceTiles =
+        sideSurfaceTileCache.get(this.#rightSideSurface) ||
+        (() => {
+          const tiles = new SideSurfaceTiles(this.#rightSideSurface)
+          sideSurfaceTileCache.set(this.#rightSideSurface, tiles)
+          return tiles
+        })()
+    }
     this.#maxLeftSideRepeatedPolygons = maxLeftSideRepeatedPolygons
     this.#maxRightSideRepeatedPolygons = maxRightSideRepeatedPolygons
 
@@ -224,33 +273,36 @@ export default class TrackSegment extends MeshObject {
       absoluteLeftTrailingScreenCorner.x = Math.min(absoluteLeftTrailingScreenCorner.x, leftTrailingFixedMeshCorner.x)
       const leftLeadingScreenCorner = absoluteLeftLeadingScreenCorner.subtract(this.absolutePosition)
       const leftTrailingScreenCorner = absoluteLeftTrailingScreenCorner.subtract(this.absolutePosition)
-      if (this.#leftSideSurface instanceof Sprite) {
+      if (this.#leftSideSurfaceTiles) {
         const areaToFillWidth = Math.max(
           Math.abs(this.#leftLeadingStaticMeshCorner.x - leftLeadingScreenCorner.x),
           Math.abs(this.#leftTrailingStaticMeshCorner.x - leftTrailingScreenCorner.x),
         )
-        const polygonWidth = Math.max(
+        const tileWidth = Math.max(
           Math.ceil(areaToFillWidth / this.#maxLeftSideRepeatedPolygons),
-          this.#leftSideSurface.width,
+          this.#leftSideSurfaceTiles[`x${MAX_SPRITE_TILING_MULTIPLIER}`].width,
         )
-        const polygonCount = Math.floor(areaToFillWidth / polygonWidth)
+        const tileCount = Math.floor(areaToFillWidth / tileWidth)
         for (
-          let polygonIndex = 0,
+          let tileIndex = 0,
             rightLeadingCorner = this.#leftLeadingStaticMeshCorner,
-            rightTrailingCorner = this.#leftTrailingStaticMeshCorner,
-            leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(polygonWidth, 0, 0)),
-            leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(polygonWidth, 0, 0));
-          polygonIndex <= polygonCount;
-          rightLeadingCorner = leftLeadingCorner,
-          rightTrailingCorner = leftTrailingCorner,
-          leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(polygonWidth, 0, 0)),
-          leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(polygonWidth, 0, 0)),
-          polygonIndex++
+            rightTrailingCorner = this.#leftTrailingStaticMeshCorner;
+          tileIndex <= tileCount;
         ) {
+          let tilesPerPolygon = 1
+          while (tilesPerPolygon < tileCount - tileIndex && tilesPerPolygon < MAX_SPRITE_TILING_MULTIPLIER) {
+            tilesPerPolygon *= 2
+          }
+          const surface = this.#leftSideSurfaceTiles[`x${tilesPerPolygon}` as keyof SideSurfaceTiles]
+          const leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
+          const leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
           polygons.push({
-            surface: this.#leftSideSurface,
+            surface,
             vertices: [leftLeadingCorner, rightLeadingCorner, rightTrailingCorner, leftTrailingCorner],
           })
+          rightLeadingCorner = leftLeadingCorner
+          rightTrailingCorner = leftTrailingCorner
+          tileIndex += tilesPerPolygon
         }
       } else {
         polygons.push({
@@ -288,33 +340,36 @@ export default class TrackSegment extends MeshObject {
       )
       const rightLeadingScreenCorner = absoluteRightLeadingScreenCorder.subtract(this.absolutePosition)
       const rightTrailingScreenCorner = absoluteRightTrailingScreenCorner.subtract(this.absolutePosition)
-      if (this.#rightSideSurface instanceof Sprite) {
+      if (this.#rightSideSurfaceTiles) {
         const areaToFillWidth = Math.max(
           Math.abs(this.#rightLeadingStaticMeshCorner.x - rightLeadingScreenCorner.x),
           Math.abs(this.#rightTrailingStaticMeshCorner.x - rightTrailingScreenCorner.x),
         )
-        const polygonWidth = Math.max(
+        const tileWidth = Math.max(
           Math.ceil(areaToFillWidth / this.#maxRightSideRepeatedPolygons),
-          this.#rightSideSurface.width,
+          this.#rightSideSurfaceTiles[`x${MAX_SPRITE_TILING_MULTIPLIER}`].width,
         )
-        const polygonCount = Math.floor(areaToFillWidth / polygonWidth)
+        const tileCount = Math.floor(areaToFillWidth / tileWidth)
         for (
-          let polygonIndex = 0,
+          let tileIndex = 0,
             leftLeadingCorner = this.#rightLeadingStaticMeshCorner,
-            leftTrailingCorner = this.#rightTrailingStaticMeshCorner,
-            rightLeadingCorner = leftLeadingCorner.add(new Vector3(polygonWidth, 0, 0)),
-            rightTrailingCorner = leftTrailingCorner.add(new Vector3(polygonWidth, 0, 0));
-          polygonIndex <= polygonCount;
-          leftLeadingCorner = rightLeadingCorner,
-          leftTrailingCorner = rightTrailingCorner,
-          rightLeadingCorner = leftLeadingCorner.add(new Vector3(polygonWidth, 0, 0)),
-          rightTrailingCorner = leftTrailingCorner.add(new Vector3(polygonWidth, 0, 0)),
-          polygonIndex++
+            leftTrailingCorner = this.#rightTrailingStaticMeshCorner;
+          tileIndex <= tileCount;
         ) {
+          let tilesPerPolygon = 1
+          while (tilesPerPolygon < tileCount - tileIndex && tilesPerPolygon < MAX_SPRITE_TILING_MULTIPLIER) {
+            tilesPerPolygon *= 2
+          }
+          const surface = this.#rightSideSurfaceTiles[`x${tilesPerPolygon}` as keyof SideSurfaceTiles]
+          const rightLeadingCorner = leftLeadingCorner.add(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
+          const rightTrailingCorner = leftTrailingCorner.add(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
           polygons.push({
-            surface: this.#rightSideSurface,
+            surface,
             vertices: [leftLeadingCorner, rightLeadingCorner, rightTrailingCorner, leftTrailingCorner],
           })
+          leftLeadingCorner = rightLeadingCorner
+          leftTrailingCorner = rightTrailingCorner
+          tileIndex += tilesPerPolygon
         }
       } else {
         polygons.push({
