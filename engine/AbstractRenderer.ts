@@ -20,6 +20,10 @@ export default abstract class AbstractRenderer implements Renderer {
     object.render(this, deltaTime)
   }
 
+  public renderSubObject(object: GameObject, deltaTime: number): void {
+    object.render(this, deltaTime)
+  }
+
   public abstract drawPolygon(polygon: Polygon): void
 
   public drawMesh(mesh: Mesh): void {

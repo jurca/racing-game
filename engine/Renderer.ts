@@ -57,6 +57,8 @@ export default interface Renderer {
 
   renderObject(object: GameObject, deltaTime: number): void
 
+  renderSubObject(object: GameObject, deltaTime: number): void
+
   drawPolygon(polygon: Polygon): void
 
   drawMesh(mesh: Mesh): void

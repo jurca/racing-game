@@ -3,12 +3,14 @@ import Camera from './Camera.js'
 import Game from './Game.js'
 import GameObject from './GameObject.js'
 import {Polygon, Sprite} from './Renderer.js'
+import {lastItem} from './util.js'
 import Vector2 from './Vector2.js'
 import Vector3 from './Vector3.js'
 
 export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
   #pointOfOrigin: Readonly<Vector3> = new Vector3(0, 0, 0)
+  #pointOfOriginStack: Readonly<Vector3>[] = []
   readonly #clearEachFrame: boolean
 
   constructor(
@@ -42,6 +44,15 @@ export default class Canvas2DRenderer extends AbstractRenderer {
   public renderObject(object: GameObject, deltaTime: number): void {
     this.#pointOfOrigin = object.absolutePosition
     super.renderObject(object, deltaTime)
+  }
+
+  public renderSubObject(object: GameObject, deltaTime: number): void {
+    const parentPointOfOrigin = this.#pointOfOrigin
+    this.#pointOfOriginStack.push(parentPointOfOrigin.add(object.position))
+    this.#pointOfOrigin = lastItem(this.#pointOfOriginStack as [Vector3, ...Vector3[]])
+    super.renderSubObject(object, deltaTime)
+    this.#pointOfOriginStack.pop()
+    this.#pointOfOrigin = parentPointOfOrigin
   }
 
   public drawPolygon(polygon: Polygon): void {
