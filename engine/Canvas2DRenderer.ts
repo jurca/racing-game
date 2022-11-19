@@ -57,7 +57,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
       color = polygon.surface.asCssString
     }
 
-    const projectedVertices = polygon.vertices.map(this.#projectPoint)
+    const projectedVertices = polygon.vertices.map(this.#projectPoint, this)
     this.#drawPath(projectedVertices)
 
     if (color) {
@@ -116,7 +116,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     this.drawSprite(position, sprite, scale * scaleX, scale * scaleY, skewX, skewY)
   }
 
-  #drawPath = (points: readonly Readonly<Vector2>[]): void => { // TypeScript 4.0.5 does not support private methods yet
+  #drawPath(points: readonly Readonly<Vector2>[]): void {
     this.renderingContext.beginPath()
     this.renderingContext.moveTo(points[0].x, points[0].y)
     for (const point of points.slice(1)) {
@@ -125,7 +125,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     this.renderingContext.closePath()
   }
 
-  #projectPoint = (point: Readonly<Vector3>): Vector2 => { // TypeScript 4.0.5 does not support private methods yet
+  #projectPoint(point: Readonly<Vector3>): Vector2 {
     return this.camera.project(this.#pointOfOrigin.add(point))
   }
 }
