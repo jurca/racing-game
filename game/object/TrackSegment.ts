@@ -7,6 +7,8 @@ import MeshObject from './MeshObject.js'
 import RoadSegment from './RoadSegment.js'
 import SpriteObject from './SpriteObject.js'
 
+const EMPTY_MESH: Mesh = []
+
 export default class TrackSegment extends MeshObject {
   readonly #staticMesh: Mesh
   #dynamicMesh: Mesh = [] // additional left- and right-side polygons to fill the screen side-to-side
@@ -18,6 +20,7 @@ export default class TrackSegment extends MeshObject {
   readonly #rightSideSurface: Color | Sprite
   readonly #maxLeftSideRepeatedPolygons: number
   readonly #maxRightSideRepeatedPolygons: number
+  #isBackToCamera = false
 
   constructor(
     position: Vector3,
@@ -193,7 +196,7 @@ export default class TrackSegment extends MeshObject {
   }
 
   protected get mesh(): Mesh {
-    return this.#staticMesh.concat(this.#dynamicMesh)
+    return this.#isBackToCamera ? EMPTY_MESH : this.#staticMesh.concat(this.#dynamicMesh)
   }
 
   public updateTick(game: Game, isLastTickInSequence: boolean): void {
@@ -207,6 +210,7 @@ export default class TrackSegment extends MeshObject {
     const leftTrailingFixedMeshCorner = this.getAbsolutePosition(this.#leftTrailingStaticMeshCorner)
     const leftLeadingFixedMeshOnScreenCorner = camera.project(leftLeadingFixedMeshCorner)
     const leftTrailingFixedMeshOnScreenCorner = camera.project(leftTrailingFixedMeshCorner)
+    this.#isBackToCamera = leftTrailingFixedMeshOnScreenCorner.y >= leftLeadingFixedMeshOnScreenCorner.y
     if (leftLeadingFixedMeshOnScreenCorner.x > 0 || leftTrailingFixedMeshOnScreenCorner.x > 0) {
       const absoluteLeftLeadingScreenCorner = camera.castRay(
         new Vector2(0, leftLeadingFixedMeshOnScreenCorner.y),
