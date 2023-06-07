@@ -14,11 +14,14 @@ export default class ProfilingRenderer implements Renderer {
 
   get renderDurationStats() {
     const durations = this.#renderDurations
-    return [
-      Math.min(...durations),
-      Math.max(...durations),
-      durations.reduce((average, duration, _, durations) => average + duration / durations.length, 0),
-    ]
+    return {
+      minRenderDuration: Math.min(...durations),
+      maxRenderDuration: Math.max(...durations),
+      avgRenderDuration: durations.reduce(
+        (average, duration, _, durations) => average + duration / durations.length,
+        0,
+      ),
+    }
   }
 
   get camera(): Camera {
