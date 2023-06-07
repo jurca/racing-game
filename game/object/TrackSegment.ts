@@ -11,6 +11,18 @@ const EMPTY_MESH: Mesh = []
 
 const MAX_SPRITE_TILING_MULTIPLIER = 32
 
+const MIN_TEXTURED_POLYGON_HEIGHT = 1 + Number.EPSILON
+
+export interface TrackSegmentTexturedSide {
+  readonly texture: readonly [Sprite, ...Sprite[]]
+  readonly impostorColor: Color
+}
+
+interface TrackSegmentTexturedSurface {
+  readonly texture: Sprite
+  readonly impostorColor: Color
+}
+
 class SideSurfaceTiles {
   readonly x1: Sprite
   readonly x2!: Sprite
@@ -45,8 +57,8 @@ export default class TrackSegment extends MeshObject {
   readonly #rightLeadingStaticMeshCorner: Readonly<Vector3>
   readonly #leftTrailingStaticMeshCorner: Readonly<Vector3>
   readonly #rightTrailingStaticMeshCorner: Readonly<Vector3>
-  readonly #leftSideSurface: Color | Sprite
-  readonly #rightSideSurface: Color | Sprite
+  readonly #leftSideSurface: Color | TrackSegmentTexturedSurface
+  readonly #rightSideSurface: Color | TrackSegmentTexturedSurface
   readonly #leftSideSurfaceTiles: null | SideSurfaceTiles = null
   readonly #rightSideSurfaceTiles: null | SideSurfaceTiles = null
   readonly #maxLeftSideRepeatedPolygons: number
@@ -55,9 +67,9 @@ export default class TrackSegment extends MeshObject {
 
   constructor(
     position: Vector3,
-    leftSide: Color | readonly [Sprite, ...Sprite[]],
+    leftSide: Color | TrackSegmentTexturedSide,
     roadArea: ReadonlyArray<RoadSegment | Color | Sprite>,
-    rightSide: Color | readonly [Sprite, ...Sprite[]],
+    rightSide: Color | TrackSegmentTexturedSide,
     sprites: readonly SpriteObject[],
     maxLeftSideRepeatedPolygons: number,
     maxBetweenRoadRepeatedPolygons: number,
@@ -101,8 +113,8 @@ export default class TrackSegment extends MeshObject {
     // Place the fixed polygons between road segments and screen edges
     this.#leftLeadingStaticMeshCorner = mostLeftLeadingRoadCorner
     this.#leftTrailingStaticMeshCorner = mostLeftTrailingRoadCorner
-    if (Array.isArray(leftSide) && leftSide.length > 1) {
-      const sprites = leftSide.slice(1).reverse()[Symbol.iterator]()
+    if (!(leftSide instanceof Color) && leftSide.texture.length > 1) {
+      const sprites = leftSide.texture.slice(1).reverse()[Symbol.iterator]()
       for (
         let {value: sprite, done} = sprites.next(),
           rightLeadingCorner = mostLeftLeadingRoadCorner,
@@ -126,8 +138,8 @@ export default class TrackSegment extends MeshObject {
     }
     this.#rightLeadingStaticMeshCorner = mostRightLeadingRoadCorner
     this.#rightTrailingStaticMeshCorner = mostRightTrailingRoadCorner
-    if (Array.isArray(rightSide) && rightSide.length > 1) {
-      const sprites = rightSide.slice(0, -1)[Symbol.iterator]()
+    if (!(rightSide instanceof Color) && rightSide.texture.length > 1) {
+      const sprites = rightSide.texture.slice(0, -1)[Symbol.iterator]()
       for (
         let {value: sprite, done} = sprites.next(),
           leftLeadingCorner = mostRightLeadingRoadCorner,
@@ -213,23 +225,33 @@ export default class TrackSegment extends MeshObject {
     }
     this.#staticMesh = polygons
 
-    this.#leftSideSurface = Array.isArray(leftSide) ? leftSide[0] : leftSide
-    this.#rightSideSurface = Array.isArray(rightSide) ? rightSide[rightSide.length - 1] : rightSide
-    if (this.#leftSideSurface instanceof Sprite) {
+    this.#leftSideSurface = leftSide instanceof Color
+      ? leftSide
+      : {
+          texture: leftSide.texture[0],
+          impostorColor: leftSide.impostorColor,
+        }
+    this.#rightSideSurface = rightSide instanceof Color
+      ? rightSide
+      : {
+          texture: rightSide.texture[rightSide.texture.length - 1],
+          impostorColor: rightSide.impostorColor,
+        }
+    if (!(this.#leftSideSurface instanceof Color)) {
       this.#leftSideSurfaceTiles =
-        sideSurfaceTileCache.get(this.#leftSideSurface) ||
+        sideSurfaceTileCache.get(this.#leftSideSurface.texture) ||
         (() => {
-          const tiles = new SideSurfaceTiles(this.#leftSideSurface)
-          sideSurfaceTileCache.set(this.#leftSideSurface, tiles)
+          const tiles = new SideSurfaceTiles(this.#leftSideSurface.texture)
+          sideSurfaceTileCache.set(this.#leftSideSurface.texture, tiles)
           return tiles
         })()
     }
-    if (this.#rightSideSurface instanceof Sprite) {
+    if (!(this.#rightSideSurface instanceof Color)) {
       this.#rightSideSurfaceTiles =
-        sideSurfaceTileCache.get(this.#rightSideSurface) ||
+        sideSurfaceTileCache.get(this.#rightSideSurface.texture) ||
         (() => {
-          const tiles = new SideSurfaceTiles(this.#rightSideSurface)
-          sideSurfaceTileCache.set(this.#rightSideSurface, tiles)
+          const tiles = new SideSurfaceTiles(this.#rightSideSurface.texture)
+          sideSurfaceTileCache.set(this.#rightSideSurface.texture, tiles)
           return tiles
         })()
     }
@@ -264,6 +286,9 @@ export default class TrackSegment extends MeshObject {
       return
     }
 
+    const useImpostor =
+        leftLeadingFixedMeshOnScreenCorner.y - leftTrailingFixedMeshOnScreenCorner.y < MIN_TEXTURED_POLYGON_HEIGHT
+
     if (leftLeadingFixedMeshOnScreenCorner.x > 0 || leftTrailingFixedMeshOnScreenCorner.x > 0) {
       const absoluteLeftLeadingScreenCorner = camera.castRay(
         new Vector2(0, leftLeadingFixedMeshOnScreenCorner.y),
@@ -277,14 +302,17 @@ export default class TrackSegment extends MeshObject {
       absoluteLeftTrailingScreenCorner.x = Math.min(absoluteLeftTrailingScreenCorner.x, leftTrailingFixedMeshCorner.x)
       const leftLeadingScreenCorner = absoluteLeftLeadingScreenCorner.subtract(this.absolutePosition)
       const leftTrailingScreenCorner = absoluteLeftTrailingScreenCorner.subtract(this.absolutePosition)
-      if (this.#leftSideSurfaceTiles) {
+      const leftSideSurface = this.#leftSideSurface instanceof Color
+        ? this.#leftSideSurface
+        : (useImpostor ? this.#leftSideSurface.impostorColor : this.#leftSideSurfaceTiles)
+      if (leftSideSurface instanceof SideSurfaceTiles) {
         const areaToFillWidth = Math.max(
           Math.abs(this.#leftLeadingStaticMeshCorner.x - leftLeadingScreenCorner.x),
           Math.abs(this.#leftTrailingStaticMeshCorner.x - leftTrailingScreenCorner.x),
         )
         const tileWidth = Math.max(
           Math.ceil(areaToFillWidth / this.#maxLeftSideRepeatedPolygons),
-          this.#leftSideSurfaceTiles[`x${MAX_SPRITE_TILING_MULTIPLIER}`].width,
+          leftSideSurface[`x${MAX_SPRITE_TILING_MULTIPLIER}`].width,
         )
         const tileCount = Math.floor(areaToFillWidth / tileWidth)
         for (
@@ -297,7 +325,7 @@ export default class TrackSegment extends MeshObject {
           while (tilesPerPolygon < tileCount - tileIndex && tilesPerPolygon < MAX_SPRITE_TILING_MULTIPLIER) {
             tilesPerPolygon *= 2
           }
-          const surface = this.#leftSideSurfaceTiles[`x${tilesPerPolygon}` as keyof SideSurfaceTiles]
+          const surface = leftSideSurface[`x${tilesPerPolygon}` as keyof SideSurfaceTiles]
           const leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
           const leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
           polygons.push({
@@ -308,9 +336,9 @@ export default class TrackSegment extends MeshObject {
           rightTrailingCorner = leftTrailingCorner
           tileIndex += tilesPerPolygon
         }
-      } else {
+      } else if (leftSideSurface instanceof Color) {
         polygons.push({
-          surface: this.#leftSideSurface,
+          surface: leftSideSurface,
           vertices: [
             leftLeadingScreenCorner,
             this.#leftLeadingStaticMeshCorner,
@@ -318,6 +346,8 @@ export default class TrackSegment extends MeshObject {
             leftTrailingScreenCorner,
           ],
         })
+      } else {
+        throw new Error('Cannot determine left side surface')
       }
     }
 
@@ -344,14 +374,17 @@ export default class TrackSegment extends MeshObject {
       )
       const rightLeadingScreenCorner = absoluteRightLeadingScreenCorder.subtract(this.absolutePosition)
       const rightTrailingScreenCorner = absoluteRightTrailingScreenCorner.subtract(this.absolutePosition)
-      if (this.#rightSideSurfaceTiles) {
+      const rightSideSurface = this.#rightSideSurface instanceof Color
+        ? this.#rightSideSurface
+        : (useImpostor ? this.#rightSideSurface.impostorColor : this.#rightSideSurfaceTiles)
+      if (rightSideSurface instanceof SideSurfaceTiles) {
         const areaToFillWidth = Math.max(
           Math.abs(this.#rightLeadingStaticMeshCorner.x - rightLeadingScreenCorner.x),
           Math.abs(this.#rightTrailingStaticMeshCorner.x - rightTrailingScreenCorner.x),
         )
         const tileWidth = Math.max(
           Math.ceil(areaToFillWidth / this.#maxRightSideRepeatedPolygons),
-          this.#rightSideSurfaceTiles[`x${MAX_SPRITE_TILING_MULTIPLIER}`].width,
+          rightSideSurface[`x${MAX_SPRITE_TILING_MULTIPLIER}`].width,
         )
         const tileCount = Math.floor(areaToFillWidth / tileWidth)
         for (
@@ -364,7 +397,7 @@ export default class TrackSegment extends MeshObject {
           while (tilesPerPolygon < tileCount - tileIndex && tilesPerPolygon < MAX_SPRITE_TILING_MULTIPLIER) {
             tilesPerPolygon *= 2
           }
-          const surface = this.#rightSideSurfaceTiles[`x${tilesPerPolygon}` as keyof SideSurfaceTiles]
+          const surface = rightSideSurface[`x${tilesPerPolygon}` as keyof SideSurfaceTiles]
           const rightLeadingCorner = leftLeadingCorner.add(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
           const rightTrailingCorner = leftTrailingCorner.add(new Vector3(tileWidth * tilesPerPolygon, 0, 0))
           polygons.push({
@@ -375,9 +408,9 @@ export default class TrackSegment extends MeshObject {
           leftTrailingCorner = rightTrailingCorner
           tileIndex += tilesPerPolygon
         }
-      } else {
+      } else if (rightSideSurface instanceof Color) {
         polygons.push({
-          surface: this.#rightSideSurface,
+          surface: rightSideSurface,
           vertices: [
             this.#rightLeadingStaticMeshCorner,
             rightLeadingScreenCorner,
@@ -385,6 +418,8 @@ export default class TrackSegment extends MeshObject {
             this.#rightTrailingStaticMeshCorner,
           ],
         })
+      } else {
+        throw new Error('Cannot determine right side surface')
       }
     }
 

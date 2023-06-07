@@ -2,7 +2,7 @@ import Game from '../../engine/Game.js'
 import {Color, Sprite} from '../../engine/Renderer.js'
 import Vector3 from '../../engine/Vector3.js'
 import Pseudo3DCamera from '../Pseudo3DCamera.js'
-import TrackSegment from '../object/TrackSegment.js'
+import TrackSegment, {TrackSegmentTexturedSide} from '../object/TrackSegment.js'
 import RoadSegment from '../object/RoadSegment.js'
 import SpriteObject from '../object/SpriteObject.js'
 import Scene from './Scene.js'
@@ -20,8 +20,8 @@ const MAX_SIDE_REPEATED_POLYGONS = 6
 const MAX_BETWEEN_ROADS_REPEATED_POLYGONS = 3
 
 interface RoadConfiguration {
-  readonly left: Color | readonly [Sprite, ...Sprite[]]
-  readonly right: Color | readonly [Sprite, ...Sprite[]]
+  readonly left: Color | TrackSegmentTexturedSide
+  readonly right: Color | TrackSegmentTexturedSide
   readonly roadGap: Color | Sprite
   readonly lanes: number
   readonly colors: {
@@ -93,8 +93,8 @@ class TrackSegmentTestScene extends Scene {
 interface SceneData {
   readonly billboards: readonly Sprite[]
   readonly roadGap?: Sprite
-  readonly leftSide?: readonly [Sprite, ...Sprite[]]
-  readonly rightSide?: readonly [Sprite, ...Sprite[]]
+  readonly leftSide?: TrackSegmentTexturedSide
+  readonly rightSide?: TrackSegmentTexturedSide
 }
 
 export default function makeScene(data: SceneData): Scene {

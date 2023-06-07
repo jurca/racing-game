@@ -1,6 +1,7 @@
 import SPRITES_CONFIGURATION from '../conf/sprites.js'
 import Canvas2DRenderer from '../engine/Canvas2DRenderer.js'
 import Game from '../engine/Game.js'
+import {Color} from '../engine/Renderer.js'
 import loadSprites from '../engine/spriteLoader.js'
 import TickUpdater from '../engine/TickUpdater.js'
 import ProfilingRenderer from '../profiler/ProfilingRenderer.js'
@@ -29,8 +30,14 @@ addEventListener('load', async () => {
       sprites.billboard9,
     ],
     roadGap: sprites.dirt,
-    leftSide: [sprites.grass, sprites.grassEdge],
-    rightSide: [sprites.oceanEdge, sprites.ocean],
+    leftSide: {
+      texture: [sprites.grass, sprites.grassEdge],
+      impostorColor: new Color(58, 180, 26, 255),
+    },
+    rightSide: {
+      texture: [sprites.oceanEdge, sprites.ocean],
+      impostorColor: new Color(26, 149, 180, 255),
+    },
   }))
 
   game.run()
