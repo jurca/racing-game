@@ -260,6 +260,10 @@ export default class TrackSegment extends MeshObject {
     const leftLeadingFixedMeshOnScreenCorner = camera.project(leftLeadingFixedMeshCorner)
     const leftTrailingFixedMeshOnScreenCorner = camera.project(leftTrailingFixedMeshCorner)
     this.#isBackToCamera = leftTrailingFixedMeshOnScreenCorner.y >= leftLeadingFixedMeshOnScreenCorner.y
+    if (this.#isBackToCamera) {
+      return
+    }
+
     if (leftLeadingFixedMeshOnScreenCorner.x > 0 || leftTrailingFixedMeshOnScreenCorner.x > 0) {
       const absoluteLeftLeadingScreenCorner = camera.castRay(
         new Vector2(0, leftLeadingFixedMeshOnScreenCorner.y),
