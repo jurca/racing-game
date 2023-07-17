@@ -6,11 +6,6 @@ import SpriteObject from '../object/SpriteObject.js'
 import Pseudo3DCamera from '../Pseudo3DCamera.js'
 import Scene from './Scene.js'
 
-interface SceneSprites {
-  readonly lowerLeftBillboard: Sprite
-  readonly spriteScaleSkewTest: Sprite
-  readonly polygonTexture: Sprite
-}
 const VIEWPORT_WIDTH = 640
 const VIEWPORT_HEIGHT = 480
 const CAMERA_VERTICAL_FIELD_OF_VIEW = 100 // degrees
@@ -63,19 +58,19 @@ for (let i = 0; i < 1000; i++) {
   ))
 }
 
-export default function makeScene(sprites: SceneSprites): Scene {
+export default function makeDefaultScene(sprites: {readonly [spriteId: string]: Sprite}): Scene {
   const scene = new Scene()
 
   scene.addSubObject(roadScene)
 
-  scene.addSubObject(new SpriteObject(new Vector3(-750, 240, 870), sprites.lowerLeftBillboard))
+  scene.addSubObject(new SpriteObject(new Vector3(-750, 240, 870), sprites.billboard1))
 
   scene.addSubObject(Object.assign(new GameObject(new Vector3(0, 1_200, 1_000)), {
     tickCounter: 0,
     render(renderer: Renderer): void {
       renderer.drawSprite(
         new Vector3(0, 0, 0),
-        sprites.spriteScaleSkewTest,
+        sprites.billboard2,
         0.5 + (this.tickCounter % 32) / 32,
         0.5 + (this.tickCounter % 48) / 48,
         0 + (this.tickCounter > 256 ? (-0.5 + (this.tickCounter % 24) / 24) : 0),
@@ -102,7 +97,7 @@ export default function makeScene(sprites: SceneSprites): Scene {
         ],
       })
       renderer.drawPolygon({
-        surface: sprites.polygonTexture,
+        surface: sprites.billboard3,
         vertices: [
           new Vector3(point1.x, point1.y, 0),
           new Vector3(point2.x, point1.y + this.tickCounter % 32 * 16, 0),

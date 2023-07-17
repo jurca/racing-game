@@ -97,7 +97,32 @@ interface SceneData {
   readonly rightSide?: TrackSegmentTexturedSide
 }
 
-export default function makeScene(data: SceneData): Scene {
+export default function makeDefaultScene(sprites: {readonly [spriteId: string]: Sprite}): Scene {
+  return makeScene({
+    billboards: [
+      sprites.billboard1,
+      sprites.billboard2,
+      sprites.billboard3,
+      sprites.billboard4,
+      sprites.billboard5,
+      sprites.billboard6,
+      sprites.billboard7,
+      sprites.billboard8,
+      sprites.billboard9,
+    ],
+    roadGap: sprites.dirt,
+    leftSide: {
+      texture: [sprites.grass, sprites.grassEdge],
+      impostorColor: new Color(58, 180, 26, 255),
+    },
+    rightSide: {
+      texture: [sprites.oceanEdge, sprites.ocean],
+      impostorColor: new Color(26, 149, 180, 255),
+    },
+  })
+}
+
+export function makeScene(data: SceneData): Scene {
   const scene = new TrackSegmentTestScene()
 
   // Create the segments in reverse order to have the segments rendered from the farthest to the closest
