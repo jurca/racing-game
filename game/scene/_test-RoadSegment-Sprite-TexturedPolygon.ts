@@ -118,5 +118,5 @@ export const defaultCamera = new Pseudo3DCamera(
   new Vector3(0, CAMERA_VERTICAL_OFFSET, 0),
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
-  CAMERA_VERTICAL_FIELD_OF_VIEW,
+  CAMERA_VERTICAL_FIELD_OF_VIEW / 180 * Math.PI,
 )

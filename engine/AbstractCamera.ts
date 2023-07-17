@@ -18,9 +18,7 @@ export default abstract class AbstractCamera implements Camera {
   }
 
   public get horizontalFieldOfView(): number {
-    const verticalFieldOfViewRad = this.verticalFieldOfView * Math.PI / 180
-    const horizontalFieldOfViewRad = 2 * Math.atan(Math.tan(verticalFieldOfViewRad * 0.5) * this.viewportAspectRatio)
-    return horizontalFieldOfViewRad * 180 / Math.PI
+    return 2 * Math.atan(Math.tan(this.verticalFieldOfView * 0.5) * this.viewportAspectRatio)
   }
 
   public isInVisibleDepth(point: Readonly<Vector3>): boolean {

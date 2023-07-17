@@ -6,8 +6,8 @@ const MIN_VISIBLE_DEPTH = 64
 const MAX_VISIBLE_DEPTH = Number.POSITIVE_INFINITY
 
 export default class Pseudo3DCamera extends AbstractCamera {
-  private readonly horizontalCameraDepth = 1 / Math.tan((this.horizontalFieldOfView / 2) * Math.PI / 180)
-  private readonly verticalCameraDepth = 1 / Math.tan((this.verticalFieldOfView / 2) * Math.PI / 180)
+  private readonly horizontalCameraDepth = 1 / Math.tan(this.horizontalFieldOfView / 2)
+  private readonly verticalCameraDepth = 1 / Math.tan(this.verticalFieldOfView / 2)
 
   constructor(
     position: Vector3,
