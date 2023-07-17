@@ -1,4 +1,5 @@
-import {Color, Mesh, Polygon} from '../../engine/Renderer.js'
+import Color from '../../engine/Color.js'
+import {Mesh, Polygon} from '../../engine/Renderer.js'
 import Vector3 from '../../engine/Vector3.js'
 import MeshObject from './MeshObject.js'
 

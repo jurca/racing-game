@@ -1,5 +1,6 @@
+import Color from '../../engine/Color.js'
 import Game from '../../engine/Game.js'
-import {Color, Mesh, Polygon, Sprite} from '../../engine/Renderer.js'
+import {Mesh, Polygon, Sprite} from '../../engine/Renderer.js'
 import {clamp, lastItem} from '../../engine/util.js'
 import Vector2 from '../../engine/Vector2.js'
 import Vector3 from '../../engine/Vector3.js'

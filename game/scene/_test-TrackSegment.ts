@@ -1,5 +1,6 @@
+import Color from '../../engine/Color.js'
 import Game from '../../engine/Game.js'
-import {Color, Sprite} from '../../engine/Renderer.js'
+import {Sprite} from '../../engine/Renderer.js'
 import Vector3 from '../../engine/Vector3.js'
 import Pseudo3DCamera from '../Pseudo3DCamera.js'
 import TrackSegment, {TrackSegmentTexturedSide} from '../object/TrackSegment.js'

@@ -1,4 +1,5 @@
-import Renderer, {Color, Sprite} from '../../engine/Renderer.js'
+import Color from '../../engine/Color.js'
+import Renderer, {Sprite} from '../../engine/Renderer.js'
 import Vector3 from '../../engine/Vector3.js'
 import GameObject from '../object/GameObject.js'
 import RoadSegment from '../object/RoadSegment.js'
