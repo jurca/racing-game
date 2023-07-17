@@ -28,6 +28,18 @@ export default class Vector3 {
     )
   }
 
+  public dot(otherPoint: Readonly<Vector3>): number {
+    return this.x * otherPoint.x + this.y * otherPoint.y + this.z * otherPoint.z
+  }
+
+  public scale(factor: number): Vector3 {
+    return new Vector3(
+      this.x * factor,
+      this.y * factor,
+      this.z * factor,
+    )
+  }
+
   public lerpTo(end: Readonly<Vector3>, progress: number): Vector3 {
     return new Vector3(
       lerp(this.x, end.x, progress),
