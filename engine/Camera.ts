@@ -10,6 +10,7 @@ export default interface Camera {
   readonly minVisibleDepth: number
   readonly maxVisibleDepth: number
   readonly position: Vector3
+  readonly viewportBottomDirection: Vector3
 
   isInVisibleDepth(point: Readonly<Vector3>): boolean
 

@@ -21,6 +21,10 @@ export default abstract class AbstractCamera implements Camera {
     return 2 * Math.atan(Math.tan(this.verticalFieldOfView * 0.5) * this.viewportAspectRatio)
   }
 
+  public get viewportBottomDirection(): Vector3 {
+    return new Vector3(0, 0, 1).rotateX(this.verticalFieldOfView / 2)
+  }
+
   public isInVisibleDepth(point: Readonly<Vector3>): boolean {
     const translatedPoint = this.translatePosition(point)
     return translatedPoint.z >= this.minVisibleDepth && translatedPoint.z <= this.maxVisibleDepth

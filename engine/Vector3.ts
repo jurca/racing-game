@@ -40,6 +40,16 @@ export default class Vector3 {
     )
   }
 
+  public rotateX(angle: number): Vector3 {
+    const cos = Math.cos(angle)
+    const sin = Math.sin(angle)
+    return new Vector3(
+      this.x,
+      this.y * cos - this.z * sin,
+      this.y * sin + this.z * cos,
+    )
+  }
+
   public lerpTo(end: Readonly<Vector3>, progress: number): Vector3 {
     return new Vector3(
       lerp(this.x, end.x, progress),
