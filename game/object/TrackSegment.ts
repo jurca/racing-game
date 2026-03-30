@@ -118,51 +118,37 @@ export default class TrackSegment extends MeshObject {
     this.#leftLeadingStaticMeshCorner = mostLeftLeadingRoadCorner
     this.#leftTrailingStaticMeshCorner = mostLeftTrailingRoadCorner
     if (!(leftSide instanceof Color) && leftSide.texture.length > 1) {
-      const sprites = leftSide.texture.slice(1).reverse()[Symbol.iterator]()
-      for (
-        let {value: sprite, done} = sprites.next(),
-          rightLeadingCorner = mostLeftLeadingRoadCorner,
-          rightTrailingCorner = mostLeftTrailingRoadCorner,
-          leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0)),
-          leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0));
-        !done;
-        {value: sprite, done} = sprites.next(),
-        rightLeadingCorner = leftLeadingCorner,
-        rightTrailingCorner = leftTrailingCorner,
-        leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0)),
-        leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(sprite?.width ?? 0, 0, 0))
-      ) {
+      let rightLeadingCorner = mostLeftLeadingRoadCorner
+      let rightTrailingCorner = mostLeftTrailingRoadCorner
+      for (const sprite of leftSide.texture.slice(1).reverse()) {
+        const leftLeadingCorner = rightLeadingCorner.subtract(new Vector3(sprite.width, 0, 0))
+        const leftTrailingCorner = rightTrailingCorner.subtract(new Vector3(sprite.width, 0, 0))
         polygons.push({
           surface: sprite,
           vertices: [leftLeadingCorner, rightLeadingCorner, rightTrailingCorner, leftTrailingCorner],
         })
         this.#leftLeadingStaticMeshCorner = leftLeadingCorner
         this.#leftTrailingStaticMeshCorner = leftTrailingCorner
+        rightLeadingCorner = leftLeadingCorner
+        rightTrailingCorner = leftTrailingCorner
       }
     }
     this.#rightLeadingStaticMeshCorner = mostRightLeadingRoadCorner
     this.#rightTrailingStaticMeshCorner = mostRightTrailingRoadCorner
     if (!(rightSide instanceof Color) && rightSide.texture.length > 1) {
-      const sprites = rightSide.texture.slice(0, -1)[Symbol.iterator]()
-      for (
-        let {value: sprite, done} = sprites.next(),
-          leftLeadingCorner = mostRightLeadingRoadCorner,
-          leftTrailingCorner = mostRightTrailingRoadCorner,
-          rightLeadingCorner = leftLeadingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0)),
-          rightTrailingCorner = leftTrailingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0));
-        !done;
-        {value: sprite, done} = sprites.next(),
-        leftLeadingCorner = rightLeadingCorner,
-        leftTrailingCorner = rightTrailingCorner,
-        rightLeadingCorner = leftLeadingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0)),
-        rightTrailingCorner = leftTrailingCorner.add(new Vector3(sprite?.width ?? 0, 0, 0))
-      ) {
+      let leftLeadingCorner = mostRightLeadingRoadCorner
+      let leftTrailingCorner = mostRightTrailingRoadCorner
+      for (const sprite of rightSide.texture.slice(0, -1)) {
+        const rightLeadingCorner = leftLeadingCorner.add(new Vector3(sprite.width, 0, 0))
+        const rightTrailingCorner = leftTrailingCorner.add(new Vector3(sprite.width, 0, 0))
         polygons.push({
           surface: sprite,
           vertices: [leftLeadingCorner, rightLeadingCorner, rightTrailingCorner, leftTrailingCorner],
         })
         this.#rightLeadingStaticMeshCorner = rightLeadingCorner
         this.#rightTrailingStaticMeshCorner = rightTrailingCorner
+        leftLeadingCorner = rightLeadingCorner
+        leftTrailingCorner = rightTrailingCorner
       }
     }
 

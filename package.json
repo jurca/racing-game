@@ -34,14 +34,10 @@
   },
   "homepage": "https://github.com/jurca/racing-game#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.6.1",
-    "@typescript-eslint/parser": "^4.6.1",
-    "eslint": "^7.12.1",
-    "eslint-config-standard": "^16.0.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "serve": "^11.3.2",
-    "typescript": "^4.9.3"
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "eslint": "^10.1.0",
+    "serve": "^14.2.6",
+    "typescript": "^6.0.2"
   }
 }
