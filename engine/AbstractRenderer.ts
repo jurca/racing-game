@@ -49,4 +49,12 @@ export default abstract class AbstractRenderer implements Renderer {
     skewX?: number,
     skewY?: number,
   ): void
+
+  public abstract drawSprite2D(
+    sprite: Sprite,
+    screenX: number,
+    screenY: number,
+    width: number,
+    height: number,
+  ): void
 }

@@ -47,4 +47,5 @@ export default {
   'images/v5/grass.png': {grass: {x: 0, y: 0, width: 64, height: 64}},
   'images/v5/ocean-edge.png': {oceanEdge: {x: 0, y: 0, width: 64, height: 64}},
   'images/v5/ocean.png': {ocean: {x: 0, y: 0, width: 64, height: 64}},
+  'images/v5/background.png': {background: {x: 0, y: 0, width: 800, height: 480}},
 } as SpritesConfiguration

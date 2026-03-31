@@ -55,4 +55,12 @@ export default interface Renderer {
     skewX?: number,
     skewY?: number,
   ): void
+
+  drawSprite2D(
+    sprite: Sprite,
+    screenX: number,
+    screenY: number,
+    width: number,
+    height: number,
+  ): void
 }

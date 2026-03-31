@@ -104,7 +104,7 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     const positionOnScreen = this.#projectPoint(position)
     this.renderingContext.save()
     this.renderingContext.transform(scaleX, skewY, skewX, scaleY, positionOnScreen.x, positionOnScreen.y)
-    this.renderingContext.drawImage(sprite.data, -sprite.width / 2, -sprite.height)
+    this.drawSprite2D(sprite, -sprite.width / 2, -sprite.height, sprite.width, sprite.height)
     this.renderingContext.restore()
   }
 
@@ -125,6 +125,16 @@ export default class Canvas2DRenderer extends AbstractRenderer {
     const topCenterOnScreen = this.#projectPoint(spriteTopCenter)
     const scale = Math.abs(topCenterOnScreen.y - bottomCenterOnScreen.y) / sprite.height
     this.drawSprite(position, sprite, scale * scaleX, scale * scaleY, skewX, skewY)
+  }
+
+  public drawSprite2D(
+    sprite: Sprite,
+    screenX: number,
+    screenY: number,
+    width: number,
+    height: number,
+  ): void {
+    this.renderingContext.drawImage(sprite.data, screenX, screenY, width, height)
   }
 
   #drawPath(points: readonly Readonly<Vector2>[]): void {

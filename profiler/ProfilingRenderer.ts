@@ -71,4 +71,14 @@ export default class ProfilingRenderer implements Renderer {
   ): void {
     this.#renderer.drawDistanceScaledSprite(position, sprite, scaleX, scaleY, skewX, skewY)
   }
+
+  drawSprite2D(
+    sprite: Sprite,
+    screenX: number,
+    screenY: number,
+    width: number,
+    height: number,
+  ): void {
+    this.#renderer.drawSprite2D(sprite, screenX, screenY, width, height)
+  }
 }

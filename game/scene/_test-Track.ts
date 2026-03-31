@@ -8,6 +8,7 @@ import RoadSegment from '../object/RoadSegment.js'
 import SpriteObject from '../object/SpriteObject.js'
 import Scene from './Scene.js'
 import {Track} from '../object/Track.js'
+import SkyBox from '../object/SkyBox.js'
 
 const VIEWPORT_WIDTH = 1_060
 const VIEWPORT_HEIGHT = 600
@@ -95,6 +96,7 @@ class TrackSegmentTestScene extends Scene {
 }
 
 interface SceneData {
+  readonly sky?: SkyBox
   readonly billboards: readonly Sprite[]
   readonly roadGap?: Sprite
   readonly leftSide?: TrackSegmentTexturedSide
@@ -103,6 +105,7 @@ interface SceneData {
 
 export default function makeDefaultScene(sprites: {readonly [spriteId: string]: Sprite}): Scene {
   return makeScene({
+    sky: new SkyBox(sprites.background, 0.1),
     billboards: [
       sprites.billboard1,
       sprites.billboard2,
@@ -130,6 +133,10 @@ export function makeScene(data: SceneData): Scene {
   const scene = new TrackSegmentTestScene()
 
   // Create the segments in reverse order to have the segments rendered from the farthest to the closest
+    if (data.sky) {
+      scene.addSubObject(data.sky)
+    }
+
   const segments = [] as TrackSegment[]
   for (let segmentIndex = 256; segmentIndex >= 0; segmentIndex--) {
     const roadSegmentConfiguration = ROAD_CONFIGURATIONS[segmentIndex % ROAD_CONFIGURATIONS.length]
