@@ -33,6 +33,7 @@
 - When adding track/segment logic, preserve assumptions in [game/object/Track.ts](game/object/Track.ts) (segments ordered by Z for culling/search behavior).
 - Keep math utilities immutable (return new vectors instead of mutating inputs), consistent with [engine/Vector2.ts](engine/Vector2.ts) and [engine/Vector3.ts](engine/Vector3.ts).
 - Avoid introducing additional global-script style code in new TypeScript modules.
+- Class member order: public static fields, private static fields, public fields, protected fields, private fields, public methods, private methods.
 
 ## Agent Notes
 - This workspace is performance-sensitive. Prefer changes that avoid per-frame allocations in hot paths unless readability or correctness requires it.
