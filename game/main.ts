@@ -4,7 +4,7 @@ import Game from '../engine/Game.js'
 import loadSprites from '../engine/spriteLoader.js'
 import TickUpdater from '../engine/TickUpdater.js'
 import ProfilingRenderer from '../profiler/ProfilingRenderer.js'
-import makeDefaultScene, {clearEachFrame, defaultCamera} from './scene/_test-Track.js'
+import makeDefaultScene, {clearEachFrame, defaultCamera} from './scene/_test-Player.js'
 
 addEventListener('load', async () => {
   const canvas = document.getElementById('game') as HTMLCanvasElement

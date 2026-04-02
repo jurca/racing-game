@@ -32,7 +32,7 @@ export default {
     palmTree: {x: 5, y: 5, width: 215, height: 540},
     playerLeft: {x: 995, y: 480, width: 80, height: 41},
     playerRight: {x: 995, y: 531, width: 80, height: 41},
-    playerStraign: {x: 1085, y: 480, width: 80, height: 41},
+    playerStraight: {x: 1085, y: 480, width: 80, height: 41},
     playerUphillLeft: {x: 1383, y: 961, width: 80, height: 45},
     playerUphillRight: {x: 1385, y: 1018, width: 80, height: 45},
     playerUphillStraight: {x: 1295, y: 1018, width: 80, height: 45},
