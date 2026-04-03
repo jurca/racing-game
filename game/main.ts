@@ -29,8 +29,6 @@ addEventListener('load', async () => {
     SCALE_UP_HOLD_FRAMES,
     EMA_ALPHA,
   ))
-  canvas.style.width = `${camera.viewportWidth}px`
-  canvas.style.height = `${camera.viewportHeight}px`
   const game = new Game(
     renderer,
     new TickUpdater(1_000 / 60),
