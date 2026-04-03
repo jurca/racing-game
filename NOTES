@@ -32,7 +32,7 @@
   optimalizovali výpočet kolízií (Track by vybral vhodné Track Segmenty, Track Segment by vybral príslušný collididable
   sprite. Tiež nejak by sa dalo optimalizovať ako sa spočíta kolízia s inými autami ak sa pracovalo s "aktuálnym" track
   segmentom)
-- dynamické škálovanie rozlíšenia podľa aktuálneho FPS - implementovať v Rendereri, v Camera potom stačí meniť
+- [x] dynamické škálovanie rozlíšenia podľa aktuálneho FPS - implementovať v Rendereri, v Camera potom stačí meniť
   viewportWidth a viewportHeight
 - Pozn.: Vyzerá to, že pôvodný OutRun mal rendering distance nastavený na cca 16 track segmentov - viď
   https://i.ytimg.com/vi/ELUl-cAtUIE/hq720.jpg
