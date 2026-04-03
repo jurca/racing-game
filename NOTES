@@ -1,5 +1,5 @@
-- GameObject by nemal mať na starosti aktualizovanie/vykresľovanie sub-objektov, toto by mal robiť updater/renderer
-- TrackSegment by mal implementovať LoD pre zlepšenie výkonu - od istej vzdialenosti by nemal používať textúry pre
+- ~~GameObject by nemal mať na starosti aktualizovanie/vykresľovanie sub-objektov, toto by mal robiť updater/renderer~~
+- [x] TrackSegment by mal implementovať LoD pre zlepšenie výkonu - od istej vzdialenosti by nemal používať textúry pre
   priestory mimo cestu ale len jeden jednofarebný polygón pre každú oblasť mimo cesty
   - implementovať aj textúrovaný medzistupeň, ktorý použije iba jednu textúru v jednom polygóne pre každú oblasť mimo
     cesty (t.j. vľavo, vpravo, a každá oblasť medzi cestami)?
@@ -27,7 +27,7 @@
 - možno by sa dala fyzika auta skopírovať z Unity 3D demo projektu
 - podpora pre gamepad? http://mdn.io/Gamepad_API
 - podpora pre nakláňanie telefónu? http://mdn.io/Gyroscope a http://mdn.io/RelativeOrientationSensor
-- vytvoriť CameraMount extends GameObject, s fluidným následovím game objektu hráča kamerou
+- [x] vytvoriť CameraMount extends GameObject, s fluidným následovím game objektu hráča kamerou
 - CollisionSystem - asi by bol overkill to robiť obecne, prípadne by sa nechalo vždy na game objektoch aby
   optimalizovali výpočet kolízií (Track by vybral vhodné Track Segmenty, Track Segment by vybral príslušný collididable
   sprite. Tiež nejak by sa dalo optimalizovať ako sa spočíta kolízia s inými autami ak sa pracovalo s "aktuálnym" track
