@@ -9,36 +9,64 @@ import Vector3 from './Vector3.js'
 
 export default class Canvas2DRenderer extends AbstractRenderer {
   protected readonly renderingContext: CanvasRenderingContext2D
+  readonly #displayContext: CanvasRenderingContext2D
+  readonly #offscreenCanvas: HTMLCanvasElement
   #pointOfOrigin: Readonly<Vector3> = new Vector3(0, 0, 0)
   #pointOfOriginStack: Readonly<Vector3>[] = []
   readonly #clearEachFrame: boolean
+  #resolutionScale: number
 
   constructor(
     protected readonly canvas: HTMLCanvasElement,
     camera: Camera,
     clearEachFrame: boolean,
+    resolutionScale: number = 1.0,
   ) {
     super(camera)
 
+    this.#resolutionScale = resolutionScale
+
     canvas.width = camera.viewportWidth
     canvas.height = camera.viewportHeight
-    const renderingContext = canvas.getContext('2d', {
-      alpha: false,
-    })
-    if (!renderingContext) {
-      throw new Error('The rendering context could not be created for the provided canvas')
+    const displayContext = canvas.getContext('2d', {alpha: false})
+    if (!displayContext) {
+      throw new Error('The display rendering context could not be created for the provided canvas')
     }
-    this.renderingContext = renderingContext
+    this.#displayContext = displayContext
+    this.#displayContext.imageSmoothingEnabled = false
+
+    this.#offscreenCanvas = document.createElement('canvas')
+    this.#offscreenCanvas.width = Math.round(camera.viewportWidth * resolutionScale)
+    this.#offscreenCanvas.height = Math.round(camera.viewportHeight * resolutionScale)
+    const offscreenContext = this.#offscreenCanvas.getContext('2d', {alpha: false})
+    if (!offscreenContext) {
+      throw new Error('The offscreen rendering context could not be created')
+    }
+    this.renderingContext = offscreenContext
     this.renderingContext.imageSmoothingEnabled = false
 
     this.#clearEachFrame = clearEachFrame
   }
 
+  public get resolutionScale(): number {
+    return this.#resolutionScale
+  }
+
+  public set resolutionScale(scale: number) {
+    this.#resolutionScale = scale
+    this.#offscreenCanvas.width = Math.round(this.camera.viewportWidth * scale)
+    this.#offscreenCanvas.height = Math.round(this.camera.viewportHeight * scale)
+    this.renderingContext.imageSmoothingEnabled = false
+  }
+
   public render(game: Game, deltaTime: number): void {
+    this.renderingContext.setTransform(1, 0, 0, 1, 0, 0)
     if (this.#clearEachFrame) {
-      this.renderingContext.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.renderingContext.clearRect(0, 0, this.#offscreenCanvas.width, this.#offscreenCanvas.height)
     }
+    this.renderingContext.setTransform(this.#resolutionScale, 0, 0, this.#resolutionScale, 0, 0)
     super.render(game, deltaTime)
+    this.#displayContext.drawImage(this.#offscreenCanvas, 0, 0, this.canvas.width, this.canvas.height)
   }
 
   public renderObject(object: GameObject, deltaTime: number): void {

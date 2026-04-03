@@ -6,18 +6,19 @@ import GameObject from '../game/object/GameObject.js'
 
 export default class ProfilingRenderer implements Renderer {
   readonly #renderer: Renderer
-  readonly #renderDurations: number[] = []
+  readonly #frameDurations: number[] = []
+  #warmupTime: number = 250
 
   constructor(renderer: Renderer) {
     this.#renderer = renderer
   }
 
-  get renderDurationStats() {
-    const durations = this.#renderDurations
+  get frameDurationStats() {
+    const durations = this.#frameDurations
     return {
-      minRenderDuration: Math.min(...durations),
-      maxRenderDuration: Math.max(...durations),
-      avgRenderDuration: durations.reduce(
+      minFrameDuration: Math.min(...durations),
+      maxFrameDuration: Math.max(...durations),
+      avgFrameDuration: durations.reduce(
         (average, duration, _, durations) => average + duration / durations.length,
         0,
       ),
@@ -29,9 +30,15 @@ export default class ProfilingRenderer implements Renderer {
   }
 
   render(game: Game, deltaTime: number): void {
-    const start = performance.now()
     this.#renderer.render(game, deltaTime)
-    this.#renderDurations.push(performance.now() - start)
+
+    if (this.#warmupTime) {
+      // During the initial warmup period, we skip profiling to allow the game to stabilize.
+      this.#warmupTime -= Math.min(this.#warmupTime, deltaTime)
+      return
+    }
+
+    this.#frameDurations.push(deltaTime)
   }
 
   renderObject(object: GameObject, deltaTime: number): void {
