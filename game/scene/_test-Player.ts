@@ -2,6 +2,7 @@ import Color from '../../engine/Color.js'
 import {Sprite} from '../../engine/Renderer.js'
 import Vector3 from '../../engine/Vector3.js'
 import Pseudo3DCamera from '../Pseudo3DCamera.js'
+import FollowCamera from '../object/FollowCamera.js'
 import Player from '../object/Player.js'
 import TrackSegment, {TrackSegmentTexturedSide} from '../object/TrackSegment.js'
 import RoadSegment from '../object/RoadSegment.js'
@@ -83,7 +84,9 @@ const ROAD_CONFIGURATIONS: readonly RoadConfiguration[] = [
   },
 ]
 
-export default function makeDefaultScene(sprites: {readonly [spriteId: string]: Sprite}): Scene {
+export default function makeDefaultScene(
+  sprites: {readonly [spriteId: string]: Sprite},
+): {scene: Scene, camera: Pseudo3DCamera} {
   const scene = new Scene()
 
   scene.addSubObject(new SkyBox(sprites.background, 0.1))
@@ -170,7 +173,7 @@ export default function makeDefaultScene(sprites: {readonly [spriteId: string]: 
 
   scene.addSubObject(new Track(new Vector3(0, 0, 0), segments, RENDER_DISTANCE))
 
-  scene.addSubObject(new Player(
+  const player = new Player(
     new Vector3(0, 0, 0),
     sprites.playerStraight,
     2.3,
@@ -178,16 +181,18 @@ export default function makeDefaultScene(sprites: {readonly [spriteId: string]: 
     2,
     3,
     96,
-  ))
+  )
+  scene.addSubObject(player)
 
-  return scene
+  const camera = new Pseudo3DCamera(
+    new Vector3(0, BASE_CAMERA_HEIGHT, -1_100),
+    VIEWPORT_WIDTH,
+    VIEWPORT_HEIGHT,
+    60 / 180 * Math.PI,
+  )
+  scene.addSubObject(new FollowCamera(camera, player, new Vector3(0, BASE_CAMERA_HEIGHT, -1_100), 0.1))
+
+  return {scene, camera}
 }
-
-export const defaultCamera = new Pseudo3DCamera(
-  new Vector3(0, BASE_CAMERA_HEIGHT, -1_100),
-  VIEWPORT_WIDTH,
-  VIEWPORT_HEIGHT,
-  60 / 180 * Math.PI,
-)
 
 export const clearEachFrame = false
