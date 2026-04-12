@@ -183,8 +183,10 @@ export default function makeDefaultScene(
     2,
     3,
     96,
-    30,
-    1.5,
+    30,  // maxSteeringSpeed
+    1.5, // steeringAcceleration
+    0.6, // strongestSteeringSpeedFraction
+    0.7, // highSpeedSteeringEffectiveness
   )
   scene.addSubObject(player)
 
