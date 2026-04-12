@@ -184,7 +184,7 @@ export default function makeDefaultScene(
     3,
     96,
     30,
-    0.3,
+    1.5,
   )
   scene.addSubObject(player)
 

@@ -24,7 +24,7 @@ export default class Player extends GameObject {
     deceleration: number,
     maxSpeed: number,
     maxSteeringSpeed: number,
-    steeringTimeToMax: number,
+    steeringAcceleration: number,
   ) {
     super(position)
     this.#sprite = sprite
@@ -34,7 +34,7 @@ export default class Player extends GameObject {
     this.#deceleration = deceleration
     this.#maxSpeed = maxSpeed
     this.#maxSteeringSpeed = maxSteeringSpeed
-    this.#steeringAcceleration = maxSteeringSpeed / (steeringTimeToMax * 60)
+    this.#steeringAcceleration = steeringAcceleration
   }
 
   public override updateTick(game: Game, isLastTickInSequence: boolean): void {
