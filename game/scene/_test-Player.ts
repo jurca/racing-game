@@ -112,9 +112,11 @@ export default function makeDefaultScene(
         texture: [sprites.grass, sprites.grassEdge],
         impostorColor: new Color(58, 180, 26, 255),
       },
+      // No part of the track must be higher than 0 in absolute coordinates, otherwise the camera will go underground
+      // when looking up at it
       [
         new RoadSegment(
-          new Vector3(-ROAD_WIDTH * 1.5, 0, 0),
+          new Vector3(-ROAD_WIDTH * 1.5, -120, 0),
           ROAD_WIDTH,
           ROAD_WIDTH,
           ROAD_SEGMENT_LENGTH,
@@ -127,7 +129,7 @@ export default function makeDefaultScene(
         ),
         sprites.dirt,
         new RoadSegment(
-          new Vector3(0, 120, 0),
+          new Vector3(0, 0, 0),
           ROAD_WIDTH,
           ROAD_WIDTH,
           ROAD_SEGMENT_LENGTH,
@@ -140,7 +142,7 @@ export default function makeDefaultScene(
         ),
         sprites.dirt,
         new RoadSegment(
-          new Vector3(ROAD_WIDTH * 1.5, 0, 0),
+          new Vector3(ROAD_WIDTH * 1.5, -120, 0),
           ROAD_WIDTH,
           ROAD_WIDTH,
           ROAD_SEGMENT_LENGTH,
@@ -174,7 +176,7 @@ export default function makeDefaultScene(
   scene.addSubObject(new Track(new Vector3(0, 0, 0), segments, RENDER_DISTANCE))
 
   const player = new Player(
-    new Vector3(0, 0, 0),
+    new Vector3(0, 0, 100),
     sprites.playerStraight,
     2.3,
     2.3,
@@ -185,7 +187,7 @@ export default function makeDefaultScene(
   scene.addSubObject(player)
 
   const camera = new Pseudo3DCamera(
-    new Vector3(0, BASE_CAMERA_HEIGHT, -1_100),
+    new Vector3(0, BASE_CAMERA_HEIGHT, -1_100 + player.position.z),
     VIEWPORT_WIDTH,
     VIEWPORT_HEIGHT,
     60 / 180 * Math.PI,
