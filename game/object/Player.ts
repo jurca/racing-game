@@ -11,6 +11,9 @@ export default class Player extends GameObject {
   readonly #acceleration: number
   readonly #deceleration: number
   readonly #maxSpeed: number
+  readonly #maxSteeringSpeed: number
+  readonly #steeringAcceleration: number
+  #steeringSpeed: number = 0
 
   constructor(
     position: Vector3,
@@ -20,6 +23,8 @@ export default class Player extends GameObject {
     acceleration: number,
     deceleration: number,
     maxSpeed: number,
+    maxSteeringSpeed: number,
+    steeringTimeToMax: number,
   ) {
     super(position)
     this.#sprite = sprite
@@ -28,6 +33,8 @@ export default class Player extends GameObject {
     this.#acceleration = acceleration
     this.#deceleration = deceleration
     this.#maxSpeed = maxSpeed
+    this.#maxSteeringSpeed = maxSteeringSpeed
+    this.#steeringAcceleration = maxSteeringSpeed / (steeringTimeToMax * 60)
   }
 
   public override updateTick(game: Game, isLastTickInSequence: boolean): void {
@@ -40,7 +47,22 @@ export default class Player extends GameObject {
       this.#speed = Math.max(this.#speed - this.#deceleration, 0)
     }
 
+    let targetSteeringSpeed = 0
+    if (game.pressedKeys['ArrowLeft']) {
+      targetSteeringSpeed -= this.#maxSteeringSpeed
+    }
+    if (game.pressedKeys['ArrowRight']) {
+      targetSteeringSpeed += this.#maxSteeringSpeed
+    }
+
+    if (this.#steeringSpeed < targetSteeringSpeed) {
+      this.#steeringSpeed = Math.min(this.#steeringSpeed + this.#steeringAcceleration, targetSteeringSpeed)
+    } else if (this.#steeringSpeed > targetSteeringSpeed) {
+      this.#steeringSpeed = Math.max(this.#steeringSpeed - this.#steeringAcceleration, targetSteeringSpeed)
+    }
+
     this.position.z += this.#speed
+    this.position.x += this.#steeringSpeed
   }
 
   public override render(renderer: Renderer, deltaTime: number): void {
